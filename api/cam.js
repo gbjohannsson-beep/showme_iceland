@@ -1,46 +1,24 @@
-const ALLOWED = [
-  'artunsbrekka','kringlan','bustadabru','arnarneshaed',
-  'engidalur','leirvogstungumelar','kambar','hellisheidi',
-  'hellisbru','kotstrond'
-];
+const ALLOWED = ['artunsbrekka','kringlan','bustadabru','arnarneshaed','engidalur','leirvogstungumelar','kambar','hellisheidi','hellisbru','kotstrond'];
 
-export default async function handler(request) {
-  const url = new URL(request.url);
-  const cam = url.searchParams.get('cam');
-  const n   = url.searchParams.get('n') || '1';
-
-  if (!cam || !ALLOWED.includes(cam)) {
-    return new Response('Invalid camera', { status: 400 });
-  }
-
-  const imgUrl = `https://www.vegagerdin.is/vgdata/vefmyndavelar/${cam}_${n}.jpg`;
-
+module.exports = async (req, res) => {
+  const { cam, n = '1' } = req.query;
+  if (!cam || !ALLOWED.includes(cam)) return res.status(400).send('Invalid');
+  const url = `https://www.vegagerdin.is/vgdata/vefmyndavelar/${cam}_${n}.jpg`;
   try {
-    const res = await fetch(imgUrl, {
+    const r = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120',
-        'Referer':    'https://www.vegagerdin.is/',
-        'Accept':     'image/jpeg,image/*',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Referer': 'https://www.vegagerdin.is/',
+        'Accept': 'image/jpeg,image/*',
       }
     });
-
-    if (!res.ok) {
-      return new Response('Image unavailable', { status: res.status });
-    }
-
-    const data = await res.arrayBuffer();
-
-    return new Response(data, {
-      status: 200,
-      headers: {
-        'Content-Type':                'image/jpeg',
-        'Cache-Control':               'public, max-age=25, s-maxage=25',
-        'Access-Control-Allow-Origin': '*',
-      }
-    });
+    if (!r.ok) return res.status(r.status).send('Unavailable');
+    const buf = await r.arrayBuffer();
+    res.setHeader('Content-Type', 'image/jpeg');
+    res.setHeader('Cache-Control', 'public, max-age=25');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).send(Buffer.from(buf));
   } catch (e) {
-    return new Response('Error: ' + e.message, { status: 502 });
+    res.status(502).send('Error: ' + e.message);
   }
-}
-
-export const config = { runtime: 'edge' };
+};
