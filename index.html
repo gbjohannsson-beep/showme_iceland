@@ -244,7 +244,7 @@ footer{position:relative;z-index:2;background:linear-gradient(180deg,rgba(3,2,12
     <button class="lbcl" onclick="cLB()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>CLOSE</button>
   </div>
   <div id="lbcont">
-    <div style="position:relative"><img id="lbimg" src="" alt=""/><div id="lbref"></div></div>
+    <div style="position:relative"><img id="lbimg" referrerpolicy="no-referrer" src="" alt=""/><div id="lbref"></div></div>
     <div id="lbno">
       <h3 id="lbnonam">—</h3>
       <p>This webcam streams through an external provider.</p>
@@ -311,7 +311,7 @@ footer{position:relative;z-index:2;background:linear-gradient(180deg,rgba(3,2,12
         </div>
         <div class="lpan">
           <div class="lpp">
-            <img id="limg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='186'%3E%3Crect width='100%25' height='100%25' fill='%2303020e'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%23b8860b' font-size='11' font-family='serif'%3ESelect a webcam%3C/text%3E%3C/svg%3E" alt=""/>
+            <img id="limg" referrerpolicy="no-referrer" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='186'%3E%3Crect width='100%25' height='100%25' fill='%2303020e'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%23b8860b' font-size='11' font-family='serif'%3ESelect a webcam%3C/text%3E%3C/svg%3E" alt=""/>
             <div class="lbad"><span class="ldot"></span>LIVE</div>
           </div>
           <div class="lsubs" id="lsubs"></div>
@@ -372,9 +372,10 @@ footer{position:relative;z-index:2;background:linear-gradient(180deg,rgba(3,2,12
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
 <script>
 // ═══ CAMERA DATA ═══════════════════════════════
-const PROXY='/api/cam';
+// Direct Vegagerdin URLs — no proxy needed
+// referrerpolicy="no-referrer" on img tags bypasses hotlink protection
 const VGD='https://www.vegagerdin.is/vgdata/vefmyndavelar/';
-function cU(slug,n){return PROXY+'?cam='+slug+'&n='+n;}
+function cU(slug,n){return VGD+slug+'_'+n+'.jpg?t='+Math.floor(Date.now()/30000);}
 function cUD(slug,n){return VGD+slug+'_'+n+'.jpg';}
 
 const CAMS=[
@@ -574,7 +575,7 @@ function rList(){
   const list=document.getElementById('clist');list.innerHTML='';
   getV().slice(0,15).forEach(cam=>{
     const d=document.createElement('div');d.className='ci'+(aCam&&aCam.id===cam.id?' on':'');d.id='ci'+cam.id;
-    const img=document.createElement('img');img.className='cth';
+    const img=document.createElement('img');img.className='cth';img.referrerPolicy='no-referrer';
     img.src=cam.imgs?cU(cam.imgs[0],1):`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='30'%3E%3Crect width='100%25' height='100%25' fill='%230a0a20'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' fill='%23b8860b' font-size='13' dominant-baseline='middle'%3E⊙%3C/text%3E%3C/svg%3E`;
     img.onerror=()=>{if(cam.imgs)img.src=cUD(cam.imgs[0],1);};
     d.appendChild(img);
@@ -608,7 +609,7 @@ function rGrid(){
   getV().forEach(cam=>{
     const card=document.createElement('div');card.className='wcc';
     const iw=document.createElement('div');iw.className='wcw';
-    const img=document.createElement('img');img.className='wci';img.loading='lazy';
+    const img=document.createElement('img');img.className='wci';img.loading='lazy';img.referrerPolicy='no-referrer';
     img.src=cam.imgs?cU(cam.imgs[0],1):`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='265' height='162'%3E%3Crect width='100%25' height='100%25' fill='%23050310'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%23b8860b' font-size='20'%3E⊙%3C/text%3E%3C/svg%3E`;
     img.onerror=()=>{if(cam.imgs)img.src=cUD(cam.imgs[0],1);};
     iw.appendChild(img);
@@ -632,7 +633,7 @@ function sCam(cam){
     const urls=Array.from({length:ct},(_,i)=>cU(sl,i+1));
     lImg(mi,urls[0],sl,1);
     urls.slice(0,3).forEach((url,i)=>{
-      const s=document.createElement('img');s.className='lsub'+(i===0?' on':'');
+      const s=document.createElement('img');s.className='lsub'+(i===0?' on':'');s.referrerPolicy='no-referrer';
       s.src=cU(sl,i+1);s.onerror=()=>{s.src=cUD(sl,i+1);};
       s.onclick=()=>{sIdx=i;lImg(mi,url,sl,i+1);document.querySelectorAll('.lsub').forEach(x=>x.classList.remove('on'));s.classList.add('on');};
       sw.appendChild(s);
@@ -646,12 +647,9 @@ function sCam(cam){
 }
 function lImg(el,url,slug,n){
   el.style.opacity='.35';
-  const tmp=new Image();
+  const tmp=new Image();tmp.referrerPolicy='no-referrer';
   tmp.onload=()=>{el.src=url;el.style.opacity='1';};
-  tmp.onerror=()=>{
-    if(url.startsWith('/api/')){const du=cUD(slug,n);const t2=new Image();t2.onload=()=>{el.src=du;el.style.opacity='1';};t2.onerror=()=>{el.style.opacity='.2';};t2.src=du;}
-    else el.style.opacity='.2';
-  };
+  tmp.onerror=()=>{el.style.opacity='.2';};
   tmp.src=url;
 }
 function oCamLink(){if(camUrl&&camUrl!='#')window.open(camUrl,'_blank');}
@@ -705,7 +703,7 @@ function oLB(cam){
     const[sl,ct]=cam.imgs;
     lLBImg(lbImg,cU(sl,1),sl,1);
     Array.from({length:ct},(_,i)=>{
-      const s=document.createElement('img');s.className='lbsub'+(i===0?' on':'');
+      const s=document.createElement('img');s.className='lbsub'+(i===0?' on':'');s.referrerPolicy='no-referrer';
       s.src=cU(sl,i+1);s.onerror=()=>{s.src=cUD(sl,i+1);};
       s.onclick=()=>{lbIdx=i;lLBImg(lbImg,cU(sl,i+1),sl,i+1);document.querySelectorAll('.lbsub').forEach(x=>x.classList.remove('on'));s.classList.add('on');};
       lbSubs.appendChild(s);
@@ -725,11 +723,12 @@ function oLB(cam){
 }
 function lLBImg(el,url,slug,n){
   el.style.opacity='.35';
-  const tmp=new Image();
+  const tmp=new Image();tmp.referrerPolicy='no-referrer';
   tmp.onload=()=>{el.src=url;el.style.opacity='1';};
   tmp.onerror=()=>{
-    if(url.startsWith('/api/')){const du=cUD(slug,n);const t2=new Image();t2.onload=()=>{el.src=du;el.style.opacity='1';};t2.onerror=()=>{el.style.display='none';document.getElementById('lbno').style.display='block';if(aCam)document.getElementById('lbext').href=aCam.url||'#';};t2.src=du;}
-    else{el.style.display='none';document.getElementById('lbno').style.display='block';if(aCam)document.getElementById('lbext').href=aCam.url||'#';}
+    el.style.display='none';
+    document.getElementById('lbno').style.display='block';
+    if(aCam)document.getElementById('lbext').href=aCam.url||'#';
   };
   tmp.src=url;
 }
