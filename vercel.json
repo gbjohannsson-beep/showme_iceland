@@ -1,5 +1,1 @@
-{
-  "routes": [
-    { "src": "/api/cam", "dest": "/api/cam.js" }
-  ]
-}
+{}
