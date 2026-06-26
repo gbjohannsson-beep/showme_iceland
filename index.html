@@ -1,0 +1,2266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="ShowMe Iceland — Live webcams from across Iceland. Watch nature, volcanoes, glaciers and cities in real time.">
+<meta property="og:title" content="ShowMe Iceland — Live Webcams">
+<meta property="og:description" content="Watch Iceland live. Webcams, weather and nature from across the island.">
+<title>ShowMe Iceland — Live Webcams</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   ROOT TOKENS
+═══════════════════════════════════════════ */
+:root {
+  --bg:       #03020e;
+  --bg1:      #07050f;
+  --bg2:      #0d0a18;
+  --gold:     #b8860b;
+  --gold2:    #daa520;
+  --gold3:    #f0c84a;
+  --goldglow: rgba(218,165,32,.18);
+  --red:      #b02020;
+  --parch:    #ecdfa8;
+  --parch2:   #c8a860;
+  --parch3:   #806030;
+  --ice:      #b8e0f8;
+  --sea:      #0a1828;
+  --border:   rgba(218,165,32,.2);
+  --rad:      4px;
+}
+
+/* ═══════════════════════════════════════════
+   RESET
+═══════════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  background: var(--bg);
+  color: var(--parch);
+  font-family: 'Crimson Text', Georgia, serif;
+  overflow-x: hidden;
+  cursor: default;
+}
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; font-family: inherit; border: none; background: none; }
+img { display: block; }
+
+/* ═══════════════════════════════════════════
+   GLOBAL PARTICLE CANVAS
+═══════════════════════════════════════════ */
+#star-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ═══════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════ */
+#nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: linear-gradient(180deg, rgba(3,2,14,.98) 0%, rgba(5,3,18,.95) 100%);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: box-shadow .3s;
+}
+#nav.scrolled {
+  box-shadow: 0 2px 40px rgba(218,165,32,.08);
+}
+.nav-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 0;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-right: 28px;
+  border-right: 1px solid var(--border);
+  margin-right: 24px;
+  flex-shrink: 0;
+}
+.logo-rune {
+  width: 38px;
+  height: 38px;
+  animation: rune-breathe 4s ease-in-out infinite;
+}
+@keyframes rune-breathe {
+  0%,100% { filter: drop-shadow(0 0 4px rgba(218,165,32,.3)); }
+  50%      { filter: drop-shadow(0 0 14px rgba(218,165,32,.8)) drop-shadow(0 0 28px rgba(218,165,32,.3)); }
+}
+.logo-text h1 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 14px;
+  color: var(--gold2);
+  letter-spacing: .08em;
+  line-height: 1.1;
+}
+.logo-text p {
+  font-size: 9px;
+  color: var(--parch3);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+.nav-links {
+  display: flex;
+  gap: 0;
+}
+.nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 0 16px;
+  height: 64px;
+  justify-content: center;
+  color: var(--parch3);
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: .14em;
+  border-bottom: 2px solid transparent;
+  transition: all .2s;
+  position: relative;
+}
+.nav-link svg {
+  width: 13px; height: 13px;
+  stroke: currentColor; fill: none; stroke-width: 1.5;
+}
+.nav-link:hover { color: var(--gold2); border-bottom-color: rgba(218,165,32,.3); }
+.nav-link.active { color: var(--gold2); border-bottom-color: var(--gold2); }
+
+.nav-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.lang-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--rad);
+  color: var(--parch3);
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: .1em;
+  transition: all .18s;
+}
+.lang-btn:hover  { color: var(--parch); border-color: var(--border); }
+.lang-btn.active { color: var(--gold2); border-color: var(--gold); background: rgba(218,165,32,.08); }
+.flag { width: 18px; height: 12px; border-radius: 2px; overflow: hidden; flex-shrink: 0; }
+
+/* ═══════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════ */
+#hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding-top: 64px;
+}
+
+/* Aurora canvas fills the hero */
+#aurora-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Radial vignette over aurora */
+#hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 0%,   rgba(3,2,14,0) 0%,   rgba(3,2,14,.7) 70%),
+    radial-gradient(ellipse at 50% 100%, rgba(3,2,14,.9) 0%,   rgba(3,2,14,0) 60%),
+    linear-gradient(180deg, rgba(3,2,14,.3) 0%, rgba(3,2,14,0) 30%, rgba(3,2,14,0) 70%, rgba(3,2,14,.8) 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  padding: 0 24px;
+  max-width: 900px;
+}
+
+/* Runic separator line */
+.rune-line {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 24px;
+  opacity: .5;
+}
+.rune-line::before,
+.rune-line::after {
+  content: '';
+  flex: 1;
+  max-width: 120px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold));
+}
+.rune-line::after { background: linear-gradient(90deg, var(--gold), transparent); }
+.rune-glyph { color: var(--gold2); font-size: 18px; letter-spacing: 8px; }
+
+.hero-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(48px, 8vw, 100px);
+  line-height: .95;
+  font-weight: 700;
+  background: linear-gradient(135deg, #f5d060 0%, #daa520 35%, #b8860b 60%, #f0c84a 85%, #daa520 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gold-shift 6s ease-in-out infinite;
+  text-shadow: none;
+  letter-spacing: .03em;
+  margin-bottom: 8px;
+}
+@keyframes gold-shift {
+  0%,100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+.hero-subtitle {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(13px, 2vw, 18px);
+  color: var(--gold2);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  opacity: .8;
+}
+.hero-desc {
+  font-size: clamp(15px, 1.8vw, 19px);
+  color: var(--parch2);
+  line-height: 1.7;
+  font-style: italic;
+  max-width: 620px;
+  margin: 0 auto 40px;
+}
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  border: 1px solid var(--gold2);
+  border-radius: var(--rad);
+  color: var(--gold2);
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  background: rgba(184,134,11,.12);
+  transition: all .3s;
+  position: relative;
+  overflow: hidden;
+}
+.hero-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(218,165,32,.2), rgba(218,165,32,0));
+  opacity: 0;
+  transition: opacity .3s;
+}
+.hero-cta:hover {
+  background: rgba(184,134,11,.25);
+  box-shadow: 0 0 30px rgba(218,165,32,.2), inset 0 0 20px rgba(218,165,32,.05);
+  transform: translateY(-2px);
+}
+.hero-cta:hover::before { opacity: 1; }
+.hero-cta svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+
+/* Scroll indicator */
+.scroll-hint {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--parch3);
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: .2em;
+  animation: bounce 2.5s ease-in-out infinite;
+}
+.scroll-hint svg { width: 20px; height: 20px; stroke: var(--gold); fill: none; stroke-width: 1.5; }
+@keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+
+/* Stat bar below hero */
+.stat-bar {
+  position: relative;
+  z-index: 5;
+  background: linear-gradient(90deg, rgba(3,2,14,.9), rgba(8,5,20,.9));
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px;
+  display: flex;
+  justify-content: center;
+  gap: 64px;
+  backdrop-filter: blur(10px);
+}
+.stat-item { text-align: center; }
+.stat-num {
+  font-family: 'Cinzel', serif;
+  font-size: 26px;
+  color: var(--gold2);
+  display: block;
+  line-height: 1;
+}
+.stat-lbl {
+  font-size: 10px;
+  color: var(--parch3);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-top: 3px;
+  display: block;
+}
+
+/* ═══════════════════════════════════════════
+   SECTION HEADERS
+═══════════════════════════════════════════ */
+.section-header {
+  text-align: center;
+  padding: 72px 24px 48px;
+  position: relative;
+  z-index: 2;
+}
+.section-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  color: var(--gold);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: block;
+}
+.section-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(28px, 4vw, 44px);
+  color: var(--parch);
+  line-height: 1.1;
+  margin-bottom: 14px;
+}
+.section-title span { color: var(--gold2); }
+.section-sub {
+  font-size: 17px;
+  color: var(--parch2);
+  font-style: italic;
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+.gold-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+}
+.gold-divider span {
+  height: 1px;
+  width: 80px;
+  background: linear-gradient(90deg, transparent, var(--gold));
+}
+.gold-divider span:last-child {
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+.gold-divider i { color: var(--gold); font-size: 12px; letter-spacing: 6px; }
+
+/* ═══════════════════════════════════════════
+   MAP SECTION
+═══════════════════════════════════════════ */
+#map-section {
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(180deg, var(--bg) 0%, var(--bg1) 100%);
+}
+
+.map-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr 260px;
+  grid-template-rows: auto;
+  max-width: 1400px;
+  margin: 0 auto;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(5,3,14,.8);
+  backdrop-filter: blur(8px);
+  box-shadow:
+    0 0 0 1px rgba(218,165,32,.06),
+    0 24px 80px rgba(0,0,0,.6),
+    0 0 100px rgba(218,165,32,.04);
+}
+
+/* LEFT SIDEBAR */
+.map-left {
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(3,2,12,.97) 0%, rgba(6,4,16,.96) 100%);
+}
+
+.left-hero {
+  padding: 22px 18px 16px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.left-hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.left-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 22px;
+  line-height: 1;
+  background: linear-gradient(135deg, #f0c84a, #daa520, #b8860b);
+  background-size: 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gold-shift 5s ease-in-out infinite;
+  margin-bottom: 8px;
+}
+.left-desc {
+  font-size: 12.5px;
+  color: var(--parch2);
+  line-height: 1.55;
+  font-style: italic;
+}
+.explore-btn {
+  margin-top: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--gold);
+  border-radius: var(--rad);
+  color: var(--gold2);
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: .14em;
+  background: rgba(184,134,11,.1);
+  transition: all .22s;
+}
+.explore-btn:hover {
+  background: rgba(184,134,11,.25);
+  box-shadow: 0 0 16px rgba(218,165,32,.15);
+  transform: translateY(-1px);
+}
+.explore-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+
+.cam-list-header {
+  padding: 9px 14px 7px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Cinzel', serif;
+  font-size: 8.5px;
+  color: var(--parch3);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.cam-list-header svg { width: 11px; height: 11px; stroke: var(--gold); fill: none; stroke-width: 1.5; }
+
+.filter-row {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.filt {
+  padding: 2px 7px;
+  border: 1px solid rgba(218,165,32,.16);
+  border-radius: 2px;
+  color: var(--parch3);
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: .06em;
+  transition: all .14s;
+}
+.filt:hover, .filt.on {
+  background: rgba(218,165,32,.12);
+  border-color: var(--gold);
+  color: var(--gold2);
+}
+
+.cam-list {
+  overflow-y: auto;
+  flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold) rgba(5,3,14,.5);
+}
+.cam-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(218,165,32,.07);
+  cursor: pointer;
+  transition: background .12s;
+  position: relative;
+}
+.cam-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 0;
+  background: var(--gold2);
+  opacity: .35;
+  transition: width .14s;
+}
+.cam-item:hover { background: rgba(218,165,32,.05); }
+.cam-item:hover::before { width: 2px; }
+.cam-item.active { background: rgba(176,32,32,.18); border-left: 2px solid var(--red); }
+.cam-item.active::before { display: none; }
+.cam-thumb {
+  width: 48px; height: 34px;
+  object-fit: cover;
+  border-radius: 2px;
+  border: 1px solid rgba(218,165,32,.2);
+  background: #0a0a20;
+  flex-shrink: 0;
+  transition: border-color .14s;
+}
+.cam-item:hover .cam-thumb { border-color: rgba(218,165,32,.5); }
+.cam-info { flex: 1; min-width: 0; }
+.cam-name {
+  font-family: 'Cinzel', serif;
+  font-size: 10.5px;
+  color: var(--parch);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cam-loc { font-size: 10px; color: var(--parch3); font-style: italic; }
+.cam-fav {
+  color: var(--parch3);
+  font-size: 12px;
+  line-height: 1;
+  padding: 2px;
+  flex-shrink: 0;
+  transition: all .14s;
+}
+.cam-fav:hover, .cam-fav.on { color: var(--gold2); }
+
+.view-all {
+  padding: 8px 12px;
+  border-top: 1px solid var(--border);
+  font-family: 'Cinzel', serif;
+  font-size: 8.5px;
+  color: var(--gold);
+  letter-spacing: .1em;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: color .14s;
+  flex-shrink: 0;
+}
+.view-all:hover { color: var(--gold2); }
+.view-all svg { width: 10px; height: 10px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+
+/* MAP CENTER */
+.map-center {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 55%, #0f2240 0%, #071428 45%, #030812 100%);
+}
+
+.map-top {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  min-height: 420px;
+}
+
+/* Aurora on map */
+#map-aurora {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#map-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  z-index: 1;
+  overflow: visible;
+}
+
+.map-tip {
+  position: absolute;
+  display: none;
+  z-index: 30;
+  background: rgba(3,2,12,.97);
+  border: 1px solid var(--gold);
+  border-radius: 3px;
+  padding: 7px 11px;
+  font-size: 12px;
+  color: var(--parch);
+  pointer-events: none;
+  line-height: 1.4;
+  max-width: 180px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.7), 0 0 8px rgba(218,165,32,.06);
+}
+
+/* Camera dot animations */
+@keyframes pulse-ring {
+  0%   { r: 8; opacity: .6; }
+  100% { r: 20; opacity: 0; }
+}
+.pulse { animation: pulse-ring 2.6s ease-out infinite; }
+
+/* LIVE PANEL */
+.live-panel {
+  border-top: 1px solid var(--border);
+  height: 185px;
+  display: flex;
+  overflow: hidden;
+  background: linear-gradient(90deg, rgba(3,2,12,.98), rgba(6,4,16,.97));
+  flex-shrink: 0;
+}
+.live-img-wrap {
+  width: 295px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  background: #000;
+}
+.live-img-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right, transparent 70%, rgba(3,2,12,.9) 100%),
+    linear-gradient(to bottom, rgba(3,2,12,.3) 0%, transparent 20%, transparent 80%, rgba(3,2,12,.4) 100%);
+  pointer-events: none;
+}
+#live-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: opacity .4s;
+}
+.live-badge {
+  position: absolute;
+  top: 8px; left: 8px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(3,2,12,.85);
+  border: 1px solid rgba(218,165,32,.3);
+  border-radius: 2px;
+  padding: 2px 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  color: var(--parch2);
+  letter-spacing: .1em;
+}
+.live-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #e05a2b;
+  animation: blink 1.4s ease-in-out infinite;
+  box-shadow: 0 0 5px rgba(224,90,43,.6);
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.1} }
+
+.live-subs {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 6px;
+  border-right: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.live-sub {
+  width: 62px; height: 42px;
+  object-fit: cover;
+  border-radius: 2px;
+  border: 1.5px solid rgba(218,165,32,.2);
+  opacity: .5;
+  cursor: pointer;
+  transition: all .15s;
+}
+.live-sub:hover, .live-sub.on { opacity: 1; border-color: var(--gold2); }
+
+.live-info {
+  flex: 1;
+  padding: 14px 18px;
+  min-width: 0;
+}
+#live-name {
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  color: var(--gold2);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#live-region { font-size: 10.5px; color: var(--parch3); text-transform: uppercase; letter-spacing: .14em; margin-top: 2px; }
+.live-wx {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+#live-temp {
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  color: var(--parch);
+}
+.live-wx-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--parch3);
+  font-size: 12px;
+}
+.live-wx-item svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+.live-btns { display: flex; gap: 6px; margin-top: 12px; }
+.live-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 6px 14px;
+  border: 1px solid var(--gold);
+  border-radius: var(--rad);
+  color: var(--gold2);
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: .1em;
+  background: rgba(184,134,11,.1);
+  transition: all .18s;
+}
+.live-btn:hover { background: rgba(184,134,11,.25); box-shadow: 0 0 12px rgba(218,165,32,.15); }
+.live-btn.sec { border-color: var(--border); background: transparent; color: var(--parch3); }
+.live-btn.sec:hover { color: var(--gold2); border-color: var(--gold); }
+.live-btn svg { width: 10px; height: 10px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+/* MAP RIGHT SIDEBAR */
+.map-right {
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(3,2,12,.97) 0%, rgba(6,4,16,.96) 100%);
+}
+
+.reg-block {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.reg-block h4 {
+  font-family: 'Cinzel', serif;
+  font-size: 8.5px;
+  color: var(--parch3);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: 9px;
+}
+.reg-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 0;
+  cursor: pointer;
+  color: var(--parch3);
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: .06em;
+  border-bottom: 1px solid rgba(218,165,32,.05);
+  transition: color .13s;
+}
+.reg-item:hover, .reg-item.on { color: var(--gold2); }
+.reg-item.all { color: var(--gold2); font-size: 10px; }
+.reg-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.wx-block { flex: 1; padding: 12px 14px; overflow-y: auto; }
+.wx-block h4 {
+  font-family: 'Cinzel', serif;
+  font-size: 8.5px;
+  color: var(--parch3);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.wx-block h4 svg { width: 12px; height: 12px; stroke: var(--gold); fill: none; stroke-width: 1.5; }
+.wx-big { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
+.wx-temp-big { font-family: 'Cinzel', serif; font-size: 28px; color: var(--parch); }
+.wx-icon { font-size: 22px; }
+.wx-desc-sm { font-size: 11px; color: var(--parch2); font-style: italic; }
+.wx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.wx-cell {
+  background: rgba(12,25,50,.5);
+  border: 1px solid rgba(30,65,110,.3);
+  border-radius: 3px;
+  padding: 5px 7px;
+}
+.wx-lbl { font-size: 8px; color: var(--parch3); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 2px; }
+.wx-val { font-family: 'Cinzel', serif; font-size: 12px; color: var(--parch); }
+#wx-stn { font-size: 9px; color: var(--parch3); font-style: italic; margin-top: 7px; opacity: .6; }
+.forecast-btn {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--rad);
+  color: var(--parch3);
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: .1em;
+  padding: 6px;
+  margin-top: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all .15s;
+  background: transparent;
+}
+.forecast-btn:hover { border-color: var(--gold); color: var(--gold2); }
+.forecast-btn svg { width: 9px; height: 9px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+
+/* ═══════════════════════════════════════════
+   WEBCAMS GRID SECTION
+═══════════════════════════════════════════ */
+#webcams-section {
+  position: relative;
+  z-index: 2;
+  padding: 0 24px 80px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.webcam-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.webcam-card {
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  overflow: hidden;
+  background: rgba(6,4,16,.8);
+  cursor: pointer;
+  transition: all .22s;
+  position: relative;
+}
+.webcam-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 5px;
+  background: linear-gradient(135deg, rgba(218,165,32,.06), transparent);
+  opacity: 0;
+  transition: opacity .22s;
+}
+.webcam-card:hover {
+  border-color: rgba(218,165,32,.5);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(0,0,0,.5), 0 0 20px rgba(218,165,32,.06);
+}
+.webcam-card:hover::before { opacity: 1; }
+.wc-img-wrap {
+  height: 170px;
+  overflow: hidden;
+  position: relative;
+  background: #050310;
+}
+.wc-img-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 60%, rgba(3,2,12,.8) 100%);
+}
+.wc-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .4s;
+}
+.webcam-card:hover .wc-img { transform: scale(1.04); }
+.wc-live {
+  position: absolute;
+  top: 8px; left: 8px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(3,2,12,.85);
+  border: 1px solid rgba(218,165,32,.25);
+  border-radius: 2px;
+  padding: 2px 7px;
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  color: var(--parch2);
+  letter-spacing: .1em;
+}
+.wc-dot { width: 5px; height: 5px; border-radius: 50%; background: #e05a2b; animation: blink 1.4s ease-in-out infinite; }
+.wc-tag {
+  position: absolute;
+  top: 8px; right: 8px;
+  z-index: 2;
+  padding: 2px 7px;
+  border-radius: 2px;
+  font-family: 'Cinzel', serif;
+  font-size: 7.5px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.tag-n { background: rgba(107,170,56,.25); color: #90d060; border: 1px solid rgba(107,170,56,.4); }
+.tag-e { background: rgba(200,60,30,.25); color: #e08060; border: 1px solid rgba(200,60,30,.4); }
+.tag-j { background: rgba(80,160,220,.2); color: #80c8f0; border: 1px solid rgba(80,160,220,.35); }
+.tag-b { background: rgba(218,165,32,.18); color: #daa520; border: 1px solid rgba(218,165,32,.35); }
+.tag-r { background: rgba(160,140,80,.2); color: #c8b870; border: 1px solid rgba(160,140,80,.35); }
+.tag-h { background: rgba(40,130,200,.2); color: #60b8e0; border: 1px solid rgba(40,130,200,.35); }
+.wc-body { padding: 12px 14px; }
+.wc-name {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  color: var(--parch);
+  margin-bottom: 2px;
+}
+.wc-region { font-size: 11px; color: var(--parch3); font-style: italic; }
+
+/* ═══════════════════════════════════════════
+   ABOUT / VIKING LORE SECTION
+═══════════════════════════════════════════ */
+#about-section {
+  position: relative;
+  z-index: 2;
+  padding: 0 24px 80px;
+}
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.about-card {
+  background: rgba(6,4,16,.8);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 28px 24px;
+  transition: all .22s;
+  position: relative;
+  overflow: hidden;
+}
+.about-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: .4;
+}
+.about-card:hover { border-color: rgba(218,165,32,.4); transform: translateY(-2px); }
+.about-rune {
+  font-size: 32px;
+  margin-bottom: 14px;
+  display: block;
+  filter: drop-shadow(0 0 8px rgba(218,165,32,.3));
+}
+.about-title {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  color: var(--gold2);
+  letter-spacing: .1em;
+  margin-bottom: 10px;
+}
+.about-text { font-size: 14px; color: var(--parch2); line-height: 1.65; }
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+#footer {
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(180deg, rgba(3,2,12,.98), #020109);
+  border-top: 1px solid var(--gold);
+  box-shadow: 0 -2px 40px rgba(218,165,32,.06);
+}
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 24px 32px;
+  border-bottom: 1px solid var(--border);
+}
+.footer-brand .logo-text h1 { font-size: 18px; margin-bottom: 8px; }
+.footer-brand p { font-size: 13px; color: var(--parch2); font-style: italic; max-width: 240px; line-height: 1.55; margin-top: 8px; }
+.footer-links h5 {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  color: var(--parch3);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.footer-links a {
+  display: block;
+  font-size: 13px;
+  color: var(--parch2);
+  margin-bottom: 8px;
+  transition: color .15s;
+}
+.footer-links a:hover { color: var(--gold2); }
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Cinzel', serif;
+  font-size: 8.5px;
+  color: var(--parch3);
+  letter-spacing: .18em;
+}
+.ship-icon {
+  font-size: 20px;
+  animation: ship-rock 6s ease-in-out infinite;
+}
+@keyframes ship-rock { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-3px) rotate(2deg)} }
+
+/* ═══════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════ */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: rgba(5,3,14,.5); }
+::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+/* ═══════════════════════════════════════════
+   ANIMATIONS & UTILITIES
+═══════════════════════════════════════════ */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 1100px) {
+  .map-layout { grid-template-columns: 240px 1fr 220px; }
+  .about-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  .map-layout { grid-template-columns: 1fr; }
+  .map-left, .map-right { display: none; }
+  .about-grid { grid-template-columns: 1fr; }
+  .footer-top { flex-direction: column; }
+  .stat-bar { gap: 24px; }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ GLOBAL STAR PARTICLES ═══ -->
+<canvas id="star-canvas"></canvas>
+
+<!-- ═══ NAVIGATION ═══ -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <svg class="logo-rune" viewBox="0 0 40 40">
+        <circle cx="20" cy="20" r="18" fill="#020109" stroke="#b8860b" stroke-width="1.4"/>
+        <circle cx="20" cy="20" r="12" fill="none" stroke="rgba(218,165,32,.3)" stroke-width=".6"/>
+        <g stroke="#daa520" stroke-width="1">
+          <line x1="20" y1="2" x2="20" y2="8"/><line x1="20" y1="8" x2="17" y2="11"/>
+          <line x1="33" y1="9" x2="28" y2="13"/><line x1="28" y1="13" x2="29" y2="16"/>
+          <line x1="38" y1="20" x2="32" y2="20"/><line x1="32" y1="20" x2="30" y2="23"/>
+          <line x1="33" y1="33" x2="28" y2="28"/><line x1="28" y1="28" x2="25" y2="29"/>
+          <line x1="20" y1="38" x2="20" y2="32"/><line x1="20" y1="32" x2="23" y2="29"/>
+          <line x1="7" y1="33" x2="12" y2="28"/><line x1="12" y1="28" x2="11" y2="25"/>
+          <line x1="2" y1="20" x2="8" y2="20"/><line x1="8" y1="20" x2="10" y2="17"/>
+          <line x1="7" y1="9" x2="12" y2="13"/><line x1="12" y1="13" x2="15" y2="12"/>
+        </g>
+        <circle cx="20" cy="20" r="3.5" fill="#daa520"/>
+      </svg>
+      <div class="logo-text">
+        <h1>SHOWME.IS</h1>
+        <p id="t-logosub">Show Me Iceland</p>
+      </div>
+    </a>
+
+    <div class="nav-links">
+      <a href="#map-section"   class="nav-link active">
+        <svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+        <span id="t-nmap">MAP</span>
+      </a>
+      <a href="#webcams-section" class="nav-link">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/></svg>
+        <span id="t-nweb">WEBCAMS</span>
+      </a>
+      <a href="#about-section" class="nav-link">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="t-nabt">ABOUT</span>
+      </a>
+      <a href="#footer" class="nav-link">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span id="t-ncon">CONTACT</span>
+      </a>
+    </div>
+
+    <div class="nav-right">
+      <button class="lang-btn active" onclick="setLang('en',this)">
+        <svg class="flag" viewBox="0 0 60 40"><rect width="60" height="40" fill="#012169"/><path d="M0,0L60,40M60,0L0,40" stroke="#fff" stroke-width="8"/><path d="M0,0L60,40M60,0L0,40" stroke="#C8102E" stroke-width="5"/><path d="M30,0V40M0,20H60" stroke="#fff" stroke-width="13"/><path d="M30,0V40M0,20H60" stroke="#C8102E" stroke-width="8"/></svg>EN
+      </button>
+      <button class="lang-btn" onclick="setLang('is',this)">
+        <svg class="flag" viewBox="0 0 60 40"><rect width="60" height="40" fill="#003897"/><path d="M15,0V40M0,20H60" stroke="#fff" stroke-width="9"/><path d="M15,0V40M0,20H60" stroke="#d72828" stroke-width="5"/></svg>IS
+      </button>
+      <button class="lang-btn" onclick="setLang('de',this)">
+        <svg class="flag" viewBox="0 0 60 40"><rect width="60" height="40" fill="#FFCE00"/><rect width="60" height="27" fill="#DD0000"/><rect width="60" height="13" fill="#000"/></svg>DE
+      </button>
+      <button class="lang-btn" onclick="setLang('fr',this)">
+        <svg class="flag" viewBox="0 0 60 40"><rect width="60" height="40" fill="#ED2939"/><rect width="40" height="40" fill="#fff"/><rect width="20" height="40" fill="#002395"/></svg>FR
+      </button>
+      <button class="lang-btn" onclick="setLang('es',this)">
+        <svg class="flag" viewBox="0 0 60 40"><rect width="60" height="40" fill="#AA151B"/><rect y="10" width="60" height="20" fill="#F1BF00"/></svg>ES
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section id="hero">
+  <canvas id="aurora-canvas"></canvas>
+  <div class="hero-content">
+    <div class="rune-line">
+      <span class="rune-glyph">ᚠ ᚢ ᚦ</span>
+    </div>
+    <h2 class="hero-title" id="t-hero">SHOW ME<br>ICELAND</h2>
+    <p class="hero-subtitle" id="t-heroSub">Live from the Land of Fire & Ice</p>
+    <p class="hero-desc" id="t-heroDesc">Explore Iceland in real time through our network of webcams. Weather, nature and adventure — live from around the island.</p>
+    <a href="#map-section" class="hero-cta">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></svg>
+      <span id="t-xplr">EXPLORE THE MAP</span>
+    </a>
+  </div>
+  <div class="scroll-hint">
+    <span id="t-scroll">SCROLL</span>
+    <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+</section>
+
+<!-- STAT BAR -->
+<div class="stat-bar">
+  <div class="stat-item"><span class="stat-num" id="t-s1">40+</span><span class="stat-lbl" id="t-sl1">Live Cameras</span></div>
+  <div class="stat-item"><span class="stat-num" id="t-s2">8</span><span class="stat-lbl" id="t-sl2">Regions</span></div>
+  <div class="stat-item"><span class="stat-num" id="t-s3">24/7</span><span class="stat-lbl" id="t-sl3">Live Feeds</span></div>
+  <div class="stat-item"><span class="stat-num" id="t-s4">5</span><span class="stat-lbl" id="t-sl4">Languages</span></div>
+</div>
+
+<!-- ═══ MAP SECTION ═══ -->
+<section id="map-section">
+  <div class="section-header fade-in">
+    <span class="section-eyebrow" id="t-mapEye">Interactive Map</span>
+    <h2 class="section-title" id="t-mapTitle">Explore <span>Iceland</span></h2>
+    <p class="section-sub" id="t-mapSub">Click any camera pin on the map to watch live footage from that location</p>
+    <div class="gold-divider"><span></span><i>ᚲ</i><span></span></div>
+  </div>
+
+  <div style="padding:0 24px 24px;max-width:1400px;margin:0 auto">
+    <div class="map-layout">
+
+      <!-- LEFT -->
+      <aside class="map-left">
+        <div class="left-hero">
+          <div class="left-title" id="t-leftTitle">SHOW ME<br>ICELAND</div>
+          <p class="left-desc" id="t-leftDesc">Explore Iceland in real time through our network of webcams. Weather, nature and adventure — live from around the island.</p>
+          <a href="#map-section" class="explore-btn">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></svg>
+            <span id="t-xplr2">EXPLORE THE MAP</span>
+          </a>
+        </div>
+        <div class="cam-list-header">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/></svg>
+          <span id="t-wbhdr">LIVE WEBCAMS</span>
+        </div>
+        <div class="filter-row" id="filter-row"></div>
+        <div class="cam-list" id="cam-list"></div>
+        <div class="view-all"><span id="t-vwall">VIEW ALL WEBCAMS</span><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </aside>
+
+      <!-- MAP CENTER -->
+      <div class="map-center">
+        <div class="map-top" id="map-top">
+          <canvas id="map-aurora"></canvas>
+          <svg id="map-svg" viewBox="0 0 720 460" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- Land gradient — topographic, rich brown-gold -->
+              <radialGradient id="land-g" cx="42%" cy="44%" r="62%">
+                <stop offset="0%"   stop-color="#9a8050"/>
+                <stop offset="30%"  stop-color="#7a6035"/>
+                <stop offset="65%"  stop-color="#544025"/>
+                <stop offset="100%" stop-color="#281806"/>
+              </radialGradient>
+              <!-- Glacier gradient -->
+              <linearGradient id="glac-g" x1="0" y1="0" x2=".25" y2="1">
+                <stop offset="0%"   stop-color="#eef8ff"/>
+                <stop offset="45%"  stop-color="#b8daf0"/>
+                <stop offset="100%" stop-color="#70b0d8"/>
+              </linearGradient>
+              <!-- Land shadow filter -->
+              <filter id="land-shad">
+                <feDropShadow dx="0" dy="5" stdDeviation="10" flood-color="#000" flood-opacity=".7"/>
+              </filter>
+              <!-- Glacier glow -->
+              <filter id="glac-glow">
+                <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#80c8f0" flood-opacity=".5"/>
+              </filter>
+              <!-- Volcano glow -->
+              <filter id="volc-glow">
+                <feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#e06020" flood-opacity=".9"/>
+              </filter>
+              <!-- Pin glow -->
+              <filter id="pin-glow">
+                <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#daa520" flood-opacity=".7"/>
+              </filter>
+              <!-- Terrain hatch -->
+              <pattern id="terr" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(35)">
+                <line x1="0" y1="0" x2="0" y2="5" stroke="rgba(0,0,0,.1)" stroke-width=".8"/>
+              </pattern>
+              <!-- Sea wave pattern -->
+              <pattern id="sea-waves" patternUnits="userSpaceOnUse" width="100" height="36">
+                <path d="M0 18 Q25 8 50 18 Q75 28 100 18" stroke="rgba(40,110,180,.07)" stroke-width="1.3" fill="none"/>
+                <path d="M0 29 Q25 19 50 29 Q75 39 100 29" stroke="rgba(40,110,180,.04)" stroke-width="1" fill="none"/>
+              </pattern>
+              <!-- Land corona -->
+              <radialGradient id="corona" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="rgba(218,165,32,.08)"/>
+                <stop offset="100%" stop-color="rgba(218,165,32,0)"/>
+              </radialGradient>
+            </defs>
+
+            <!-- Sea background -->
+            <rect width="720" height="460" fill="url(#sea-waves)"/>
+
+            <!-- ICELAND MAIN BODY
+                 Projection: Mercator, lon:-24.6→-12.8 (11.8°), lat:63.0→66.7 (3.7°)
+                 x = (lon+24.6)/11.8*720
+                 y = merc_scaled * 460
+                 Verified against Natural Earth 50m data -->
+            <path filter="url(#land-shad)"
+              fill="url(#land-g)" stroke="rgba(22,10,0,.85)" stroke-width="1.4" stroke-linejoin="round"
+              d="M17,151 L41,198 L49,228 L58,258
+                 L97,316 L120,335 L162,355 L228,375
+                 L295,380 L322,391 L342,384 L380,374
+                 L438,335 L503,307 L549,280 L570,198
+                 L588,171 L603,140 L594,99
+                 L576,68 L557,42
+                 L532,88 L501,106 L470,130 L445,126
+                 L430,87 L408,72 L384,107 L366,120
+                 L335,116 L313,101
+                 L288,139 L270,152 L235,137 L212,108
+                 L184,140 L167,151 L142,145 L122,135
+                 L97,154 L82,171 L68,194
+                 L55,207 L43,218 Z"/>
+
+            <!-- Terrain texture -->
+            <path fill="url(#terr)" opacity=".3"
+              d="M17,151 L41,198 L49,228 L58,258
+                 L97,316 L120,335 L162,355 L228,375
+                 L295,380 L322,391 L342,384 L380,374
+                 L438,335 L503,307 L549,280 L570,198
+                 L588,171 L603,140 L594,99
+                 L576,68 L557,42
+                 L532,88 L501,106 L470,130 L445,126
+                 L430,87 L408,72 L384,107 L366,120
+                 L335,116 L313,101
+                 L288,139 L270,152 L235,137 L212,108
+                 L184,140 L167,151 L142,145 L122,135
+                 L97,154 L82,171 L68,194
+                 L55,207 L43,218 Z"/>
+
+            <!-- Land corona glow -->
+            <ellipse cx="330" cy="265" rx="320" ry="200" fill="url(#corona)" opacity=".7"/>
+
+            <!-- ── GLACIERS ── -->
+            <!-- Vatnajökull (largest) -->
+            <ellipse cx="438" cy="274" rx="100" ry="86" fill="url(#glac-g)" stroke="#88c0e2" stroke-width="1" opacity=".93" filter="url(#glac-glow)"/>
+            <!-- crevasse lines -->
+            <g opacity=".22" stroke="rgba(140,200,240,.7)" stroke-width=".9">
+              <line x1="360" y1="264" x2="346" y2="248"/>
+              <line x1="390" y1="248" x2="378" y2="233"/>
+              <line x1="464" y1="248" x2="476" y2="235"/>
+              <line x1="506" y1="262" x2="520" y2="250"/>
+              <line x1="352" y1="295" x2="336" y2="310"/>
+              <line x1="520" y1="292" x2="535" y2="304"/>
+            </g>
+            <text x="438" y="279" text-anchor="middle" fill="rgba(12,38,60,.65)" font-size="9.5" font-family="Crimson Text,serif" font-style="italic">Vatnajökull</text>
+
+            <!-- Langjökull -->
+            <ellipse cx="260" cy="244" rx="39" ry="31" fill="url(#glac-g)" stroke="#80b8e0" stroke-width=".9" opacity=".9" filter="url(#glac-glow)"/>
+            <text x="260" y="248" text-anchor="middle" fill="rgba(12,38,60,.6)" font-size="8" font-family="Crimson Text,serif" font-style="italic">Langjökull</text>
+
+            <!-- Hofsjökull -->
+            <ellipse cx="330" cy="230" rx="24" ry="19" fill="url(#glac-g)" stroke="#80b8e0" stroke-width=".8" opacity=".88"/>
+
+            <!-- Mýrdalsjökull -->
+            <ellipse cx="318" cy="350" rx="22" ry="17" fill="url(#glac-g)" stroke="#80b8e0" stroke-width=".8" opacity=".9"/>
+
+            <!-- Eyjafjallajökull -->
+            <ellipse cx="282" cy="360" rx="17" ry="13" fill="url(#glac-g)" stroke="#80b8e0" stroke-width=".7" opacity=".86"/>
+
+            <!-- Snæfellsjökull -->
+            <ellipse cx="49" cy="232" rx="14" ry="11" fill="url(#glac-g)" stroke="#80b8e0" stroke-width=".7" opacity=".9"/>
+
+            <!-- Drangajökull (Westfjords) -->
+            <ellipse cx="140" cy="68" rx="18" ry="14" fill="url(#glac-g)" stroke="#80b8e0" stroke-width=".7" opacity=".84"/>
+
+            <!-- ── RING ROAD ── -->
+            <path fill="none" stroke="rgba(184,134,11,.24)" stroke-width="1.6" stroke-dasharray="5,4" stroke-linecap="round"
+              d="M149,339 L180,346 L216,356 L268,370 L295,382
+                 L343,384 L380,374 L438,335 L503,307 L549,280
+                 L570,198 L576,68"/>
+            <!-- North arc -->
+            <path fill="none" stroke="rgba(184,134,11,.16)" stroke-width="1.4" stroke-dasharray="5,4" stroke-linecap="round"
+              d="M194,153 L222,138 L259,138 L295,144 L330,139 L358,122 L378,110"/>
+
+            <!-- ── HEKLA ── -->
+            <g filter="url(#volc-glow)">
+              <polygon points="284,324 292,339 276,339" fill="#6a2008" stroke="#e05820" stroke-width="1.2"/>
+              <text x="284" y="319" text-anchor="middle" font-size="9.5" fill="#e05820" font-family="Cinzel,serif">▲</text>
+              <circle cx="284" cy="332" r="14" fill="rgba(180,50,10,.07)"/>
+            </g>
+            <text x="300" y="320" fill="rgba(220,120,60,.7)" font-size="7.5" font-family="Cinzel,serif">Hekla</text>
+
+            <!-- ── MAP LABELS ── -->
+            <text x="330" y="448" text-anchor="middle" fill="rgba(40,95,165,.38)" font-size="10" font-family="Crimson Text,serif" font-style="italic" letter-spacing="2">Atlantic Ocean</text>
+            <text x="154" y="304" text-anchor="middle" fill="rgba(225,210,158,.52)" font-size="9.5" font-family="Cinzel,serif" letter-spacing="1">REYKJAVÍK</text>
+            <text x="378" y="112" text-anchor="middle" fill="rgba(225,210,158,.45)" font-size="9" font-family="Cinzel,serif" letter-spacing="1">AKUREYRI</text>
+            <text x="84" y="78" text-anchor="middle" fill="rgba(225,210,158,.36)" font-size="8" font-family="Cinzel,serif">VESTFIRÐIR</text>
+            <text x="588" y="162" text-anchor="middle" fill="rgba(225,210,158,.35)" font-size="8" font-family="Cinzel,serif">AUSTURLAND</text>
+
+            <!-- ── COMPASS ROSE ── -->
+            <g transform="translate(676,414)">
+              <circle r="28" fill="rgba(2,1,8,.88)" stroke="#b8860b" stroke-width="1.3"/>
+              <circle r="22" fill="none" stroke="rgba(184,134,11,.22)" stroke-width=".6"/>
+              <g stroke="#b8860b" stroke-width=".85" fill="none">
+                <line x1="0" y1="-24" x2="0" y2="-16"/><line x1="0" y1="16" x2="0" y2="24"/>
+                <line x1="-24" y1="0" x2="-16" y2="0"/><line x1="16" y1="0" x2="24" y2="0"/>
+                <line x1="-17" y1="-17" x2="-12" y2="-12"/><line x1="12" y1="-12" x2="17" y2="-17"/>
+                <line x1="-17" y1="17" x2="-12" y2="12"/><line x1="12" y1="12" x2="17" y2="17"/>
+              </g>
+              <polygon points="0,-20 3,0 -3,0" fill="#e06060"/>
+              <polygon points="0,20 3,0 -3,0" fill="#c8b060"/>
+              <polygon points="-20,0 0,2.5 0,-2.5" fill="#c8b060"/>
+              <polygon points="20,0 0,2.5 0,-2.5" fill="#c8b060"/>
+              <circle r="3.5" fill="#b8860b"/>
+              <text y="-28" text-anchor="middle" font-size="7.5" fill="#b8860b" font-family="Cinzel,serif">N</text>
+              <text y="34" text-anchor="middle" font-size="6" fill="rgba(184,134,11,.5)" font-family="Cinzel,serif">S</text>
+              <text x="-32" y="2.5" text-anchor="middle" font-size="6" fill="rgba(184,134,11,.5)" font-family="Cinzel,serif">W</text>
+              <text x="32" y="2.5" text-anchor="middle" font-size="6" fill="rgba(184,134,11,.5)" font-family="Cinzel,serif">E</text>
+            </g>
+
+            <!-- Scale bar -->
+            <g transform="translate(20,443)">
+              <line x1="0" y1="0" x2="88" y2="0" stroke="#b8860b" stroke-width="1.3"/>
+              <line x1="0" y1="-3.5" x2="0" y2="3.5" stroke="#b8860b" stroke-width="1.3"/>
+              <line x1="44" y1="-2" x2="44" y2="2" stroke="#b8860b" stroke-width="1"/>
+              <line x1="88" y1="-3.5" x2="88" y2="3.5" stroke="#b8860b" stroke-width="1.3"/>
+              <text x="44" y="13" text-anchor="middle" fill="rgba(184,134,11,.55)" font-size="8" font-family="Crimson Text,serif">100 km</text>
+            </g>
+
+            <!-- Camera pins added by JS -->
+            <g id="pins"></g>
+          </svg>
+          <div class="map-tip" id="map-tip"></div>
+        </div>
+
+        <!-- LIVE PANEL -->
+        <div class="live-panel">
+          <div class="live-img-wrap">
+            <img id="live-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='295' height='185'%3E%3Crect width='100%25' height='100%25' fill='%2303020e'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%23b8860b' font-size='12' font-family='serif'%3ESelect a webcam%3C/text%3E%3C/svg%3E" alt="Live camera feed"/>
+            <div class="live-badge"><span class="live-dot"></span><span id="t-live">LIVE</span></div>
+          </div>
+          <div class="live-subs" id="live-subs"></div>
+          <div class="live-info">
+            <div id="live-name">—</div>
+            <div id="live-region"></div>
+            <div class="live-wx">
+              <div id="live-temp">–°C</div>
+              <div class="live-wx-item">
+                <svg viewBox="0 0 24 24"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H5"/><path d="M9.6 4.6A2 2 0 1 1 11 8H3"/></svg>
+                <span id="live-wind">–</span>
+              </div>
+              <div class="live-wx-item">
+                <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+                <span id="live-dir">–</span>
+              </div>
+            </div>
+            <div class="live-btns">
+              <button class="live-btn" onclick="openCam()">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/></svg>
+                <span id="t-vcam">VIEW WEBCAM</span>
+              </button>
+              <button class="live-btn sec" onclick="toggleFav()" id="fav-btn">♡</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDEBAR -->
+      <aside class="map-right">
+        <div class="reg-block">
+          <h4 id="t-regh">ALL REGIONS</h4>
+          <div id="reg-list"></div>
+        </div>
+        <div class="wx-block">
+          <h4>
+            <svg viewBox="0 0 24 24"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H5"/><path d="M9.6 4.6A2 2 0 1 1 11 8H3"/><path d="M12.6 19.4A2 2 0 1 0 14 16H3"/></svg>
+            <span id="t-wxh">ICELAND WEATHER</span>
+          </h4>
+          <div class="wx-big">
+            <div class="wx-icon" id="wx-icon">⛅</div>
+            <div>
+              <div class="wx-temp-big" id="wx-temp">–°C</div>
+              <div class="wx-desc-sm" id="wx-desc">–</div>
+            </div>
+          </div>
+          <div class="wx-grid">
+            <div class="wx-cell"><div class="wx-lbl" id="t-wwind">Wind</div><div class="wx-val" id="wx-wind">–</div></div>
+            <div class="wx-cell"><div class="wx-lbl" id="t-wgust">Gust</div><div class="wx-val" id="wx-gust">–</div></div>
+            <div class="wx-cell"><div class="wx-lbl" id="t-whumid">Humidity</div><div class="wx-val" id="wx-humid">–</div></div>
+            <div class="wx-cell"><div class="wx-lbl" id="t-wpress">Pressure</div><div class="wx-val" id="wx-press">–</div></div>
+          </div>
+          <div id="wx-stn"></div>
+          <button class="forecast-btn" onclick="window.open('https://en.vedur.is/weather/forecasts/areas/','_blank')">
+            <span id="t-fcbtn">VIEW FORECAST</span>
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </aside>
+
+    </div><!-- .map-layout -->
+  </div>
+</section>
+
+<!-- ═══ WEBCAM GRID SECTION ═══ -->
+<section id="webcams-section">
+  <div class="section-header fade-in">
+    <span class="section-eyebrow" id="t-wbEye">Live Feeds</span>
+    <h2 class="section-title" id="t-wbTitle">All <span>Webcams</span></h2>
+    <p class="section-sub" id="t-wbSub">Browse all live camera feeds from across Iceland — updated every 30 seconds</p>
+    <div class="gold-divider"><span></span><i>ᚢ</i><span></span></div>
+  </div>
+  <div class="webcam-grid" id="webcam-grid"></div>
+</section>
+
+<!-- ═══ ABOUT SECTION ═══ -->
+<section id="about-section">
+  <div class="section-header fade-in">
+    <span class="section-eyebrow" id="t-abtEye">About</span>
+    <h2 class="section-title" id="t-abtTitle">Our <span>Heritage</span></h2>
+    <div class="gold-divider"><span></span><i>ᚦ</i><span></span></div>
+  </div>
+  <div class="about-grid fade-in" style="padding:0 24px;max-width:1100px;margin:0 auto">
+    <div class="about-card">
+      <span class="about-rune">ᚠ</span>
+      <div class="about-title" id="t-a1t">Live from Iceland</div>
+      <p class="about-text" id="t-a1d">ShowMe Iceland aggregates live webcam feeds from Vegagerðin, LiveFromIceland, and other Icelandic sources — giving you the most complete real-time view of the island anywhere online.</p>
+    </div>
+    <div class="about-card">
+      <span class="about-rune">ᚢ</span>
+      <div class="about-title" id="t-a2t">Real-time Weather</div>
+      <p class="about-text" id="t-a2d">Weather data is sourced directly from the Icelandic Meteorological Office (Veðurstofa Íslands) via their open API — the most accurate and up-to-date weather information available for Iceland.</p>
+    </div>
+    <div class="about-card">
+      <span class="about-rune">ᚦ</span>
+      <div class="about-title" id="t-a3t">Nature is Our Heritage</div>
+      <p class="about-text" id="t-a3d">Iceland's dramatic landscapes — glaciers, volcanoes, geysers and northern lights — are a global heritage. ShowMe Iceland exists to share this beauty with the world, and to inspire its protection.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer id="footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="logo">
+        <svg class="logo-rune" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="#020109" stroke="#b8860b" stroke-width="1.4"/>
+          <g stroke="#daa520" stroke-width="1">
+            <line x1="20" y1="2" x2="20" y2="8"/><line x1="20" y1="8" x2="17" y2="11"/>
+            <line x1="33" y1="9" x2="28" y2="13"/><line x1="28" y1="13" x2="29" y2="16"/>
+            <line x1="38" y1="20" x2="32" y2="20"/><line x1="32" y1="20" x2="30" y2="23"/>
+            <line x1="33" y1="33" x2="28" y2="28"/><line x1="28" y1="28" x2="25" y2="29"/>
+            <line x1="20" y1="38" x2="20" y2="32"/><line x1="20" y1="32" x2="23" y2="29"/>
+            <line x1="7" y1="33" x2="12" y2="28"/><line x1="12" y1="28" x2="11" y2="25"/>
+            <line x1="2" y1="20" x2="8" y2="20"/><line x1="8" y1="20" x2="10" y2="17"/>
+            <line x1="7" y1="9" x2="12" y2="13"/><line x1="12" y1="13" x2="15" y2="12"/>
+          </g>
+          <circle cx="20" cy="20" r="3.5" fill="#daa520"/>
+        </svg>
+        <div class="logo-text"><h1>SHOWME.IS</h1></div>
+      </div>
+      <p id="t-footDesc">Iceland in real time. Webcams, weather and nature — live from around the island.</p>
+    </div>
+    <div class="footer-links">
+      <h5 id="t-fl1h">Explore</h5>
+      <a href="#map-section" id="t-fl1a">Interactive Map</a>
+      <a href="#webcams-section" id="t-fl1b">All Webcams</a>
+      <a href="#about-section" id="t-fl1c">About</a>
+    </div>
+    <div class="footer-links">
+      <h5 id="t-fl2h">Data Sources</h5>
+      <a href="https://umferdin.is/en/cameras" target="_blank">Vegagerðin Cameras</a>
+      <a href="https://livefromiceland.is" target="_blank">LiveFromIceland</a>
+      <a href="https://en.vedur.is" target="_blank">Veðurstofa Íslands</a>
+      <a href="https://apis.is" target="_blank">APIs.is</a>
+    </div>
+    <div class="footer-links">
+      <h5 id="t-fl3h">Iceland</h5>
+      <a href="https://www.visiticeland.com" target="_blank" id="t-fl3a">Visit Iceland</a>
+      <a href="https://en.vedur.is/weather/forecasts/areas/" target="_blank" id="t-fl3b">Weather Forecast</a>
+      <a href="https://safetravel.is" target="_blank" id="t-fl3c">Safe Travel</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span id="t-fc1">NATURE IS OUR HERITAGE</span>
+    <span class="ship-icon">⛵</span>
+    <span id="t-fc2">RESPECT IT — PROTECT IT</span>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════ -->
+<script>
+// ── TRANSLATIONS ──────────────────────────────────────
+const TR = {
+  en: {
+    logosub:"Show Me Iceland",nmap:"MAP",nweb:"WEBCAMS",nabt:"ABOUT",ncon:"CONTACT",
+    hero:"SHOW ME<br>ICELAND",heroSub:"Live from the Land of Fire & Ice",
+    heroDesc:"Explore Iceland in real time through our network of webcams. Weather, nature and adventure — live from around the island.",
+    xplr:"EXPLORE THE MAP",xplr2:"EXPLORE THE MAP",scroll:"SCROLL",
+    s1:"40+",sl1:"Live Cameras",s2:"8",sl2:"Regions",s3:"24/7",sl3:"Live Feeds",s4:"5",sl4:"Languages",
+    mapEye:"Interactive Map",mapTitle:"Explore <span>Iceland</span>",
+    mapSub:"Click any camera pin on the map to watch live footage from that location",
+    leftTitle:"SHOW ME<br>ICELAND",leftDesc:"Explore Iceland in real time. Weather, nature and adventure — live from around the island.",
+    wbhdr:"LIVE WEBCAMS",vwall:"VIEW ALL WEBCAMS",live:"LIVE",vcam:"VIEW WEBCAM",
+    regh:"ALL REGIONS",wxh:"ICELAND WEATHER",wwind:"Wind",wgust:"Gust",whumid:"Humidity",wpress:"Pressure",fcbtn:"VIEW FORECAST",
+    wbEye:"Live Feeds",wbTitle:"All <span>Webcams</span>",wbSub:"Browse all live camera feeds from across Iceland — updated every 30 seconds",
+    abtEye:"About",abtTitle:"Our <span>Heritage</span>",
+    a1t:"Live from Iceland",a1d:"ShowMe Iceland aggregates live webcam feeds from Vegagerðin, LiveFromIceland, and other Icelandic sources — giving you the most complete real-time view of the island anywhere online.",
+    a2t:"Real-time Weather",a2d:"Weather data is sourced directly from the Icelandic Meteorological Office via their open API — the most accurate and up-to-date weather information for Iceland.",
+    a3t:"Nature is Our Heritage",a3d:"Iceland's dramatic landscapes — glaciers, volcanoes, geysers and northern lights — are a global heritage. ShowMe Iceland exists to share this beauty with the world.",
+    footDesc:"Iceland in real time. Webcams, weather and nature — live from around the island.",
+    fl1h:"Explore",fl1a:"Interactive Map",fl1b:"All Webcams",fl1c:"About",
+    fl2h:"Data Sources",fl3h:"Iceland",fl3a:"Visit Iceland",fl3b:"Weather Forecast",fl3c:"Safe Travel",
+    fc1:"NATURE IS OUR HERITAGE",fc2:"RESPECT IT — PROTECT IT",
+    regions:["All Regions","Capital Region","S. Peninsula","Western Iceland","Westfjords","North Iceland","East Iceland","SE Iceland","South Iceland"],
+    filters:["All","Nature","Volcano","Glacier","City","Road"],
+  },
+  is: {
+    logosub:"Sýndu mér Ísland",nmap:"KORT",nweb:"MYNDAVÉLAR",nabt:"UM",ncon:"SAMBAND",
+    hero:"SÝNDU MÉR<br>ÍSLAND",heroSub:"Beinlífsending frá landi eldsins og ísins",
+    heroDesc:"Skoðaðu Ísland í beinni sendingu í gegnum net vefmyndavéla okkar. Veður, náttúra og ævintýri — beint frá eyjunni.",
+    xplr:"SKOÐA KORTIÐ",xplr2:"SKOÐA KORTIÐ",scroll:"FLETTA",
+    s1:"40+",sl1:"Myndavélar",s2:"8",sl2:"Svæði",s3:"24/7",sl3:"Beinar Sendingar",s4:"5",sl4:"Tungumál",
+    mapEye:"Gagnvirkt Kort",mapTitle:"Skoðaðu <span>Ísland</span>",
+    mapSub:"Smelltu á myndavélapin á kortinu til að horfa á beina sendingu",
+    leftTitle:"SÝNDU MÉR<br>ÍSLAND",leftDesc:"Skoðaðu Ísland í beinni sendingu. Veður, náttúra og ævintýri — beint frá eyjunni.",
+    wbhdr:"BEINAR SENDINGAR",vwall:"SJÁÐU ALLAR",live:"BEINT",vcam:"SKOÐA MYNDAVÉL",
+    regh:"ÖLL SVÆÐI",wxh:"VEÐUR Á ÍSLANDI",wwind:"Vindur",wgust:"Vindhviða",whumid:"Rakastig",wpress:"Þrýstingur",fcbtn:"VEÐURSPÁ",
+    wbEye:"Beinar Sendingar",wbTitle:"Allar <span>Myndavélar</span>",wbSub:"Skoðaðu allar beinar myndavélasendingar frá Íslandi — uppfærðar á 30 sekúndna fresti",
+    abtEye:"Um Okkur",abtTitle:"Arfur <span>Okkar</span>",
+    a1t:"Beint frá Íslandi",a1d:"ShowMe Iceland safnar saman beinum myndavélastraumum frá Vegagerðinni, LiveFromIceland og öðrum íslenskum heimildum.",
+    a2t:"Veður í Rauntíma",a2d:"Veðurgögn koma beint frá Veðurstofu Íslands í gegnum opið API — nákvæmustu veðurupplýsingar sem völ er á.",
+    a3t:"Náttúran er Arfur Okkar",a3d:"Dramatískt landslag Íslands — jöklar, eldfjöll, goshverir og norðurljós — er heimsarfur. ShowMe Iceland er til til að deila þessari fegurð með heiminum.",
+    footDesc:"Ísland í rauntíma. Myndavélar, veður og náttúra — beint frá eyjunni.",
+    fl1h:"Skoða",fl1a:"Gagnvirkt Kort",fl1b:"Allar Myndavélar",fl1c:"Um Okkur",
+    fl2h:"Gagnlindir",fl3h:"Ísland",fl3a:"Ferðamálastofa",fl3b:"Veðurspá",fl3c:"Safe Travel",
+    fc1:"NÁTTÚRAN ER ARF OKKAR",fc2:"VIRTU OG VERNDAÐU",
+    regions:["Öll svæði","Höfuðborgar.","Suðurnes","Vesturland","Vestfirðir","Norðurland","Austurland","Suðaustur.","Suðurland"],
+    filters:["Allt","Náttúra","Eldfjall","Jökull","Borg","Vegur"],
+  },
+  de: {
+    logosub:"Zeig mir Island",nmap:"KARTE",nweb:"WEBCAMS",nabt:"ÜBER",ncon:"KONTAKT",
+    hero:"ZEIG MIR<br>ISLAND",heroSub:"Live aus dem Land des Feuers und des Eises",
+    heroDesc:"Entdecke Island in Echtzeit durch unser Webcam-Netzwerk. Wetter, Natur und Abenteuer — live von der Insel.",
+    xplr:"KARTE ERKUNDEN",xplr2:"KARTE ERKUNDEN",scroll:"SCROLLEN",
+    s1:"40+",sl1:"Live-Kameras",s2:"8",sl2:"Regionen",s3:"24/7",sl3:"Live-Feeds",s4:"5",sl4:"Sprachen",
+    mapEye:"Interaktive Karte",mapTitle:"Erkunde <span>Island</span>",
+    mapSub:"Klicke auf einen Kamerapin auf der Karte, um Live-Aufnahmen zu sehen",
+    leftTitle:"ZEIG MIR<br>ISLAND",leftDesc:"Erkunde Island in Echtzeit. Wetter, Natur und Abenteuer — live von der Insel.",
+    wbhdr:"LIVE WEBCAMS",vwall:"ALLE ANZEIGEN",live:"LIVE",vcam:"WEBCAM ANSEHEN",
+    regh:"ALLE REGIONEN",wxh:"ISLAND WETTER",wwind:"Wind",wgust:"Böen",whumid:"Feuchte",wpress:"Druck",fcbtn:"VORHERSAGE",
+    wbEye:"Live-Feeds",wbTitle:"Alle <span>Webcams</span>",wbSub:"Alle Live-Kamerafeeds aus Island — alle 30 Sekunden aktualisiert",
+    abtEye:"Über",abtTitle:"Unser <span>Erbe</span>",
+    a1t:"Live aus Island",a1d:"ShowMe Iceland aggregiert Live-Webcam-Feeds von Vegagerðin, LiveFromIceland und anderen isländischen Quellen.",
+    a2t:"Echtzeit-Wetter",a2d:"Wetterdaten stammen direkt vom Isländischen Meteorologischen Amt über ihre offene API.",
+    a3t:"Die Natur ist unser Erbe",a3d:"Islands dramatische Landschaften — Gletscher, Vulkane, Geysire und Nordlichter — sind ein globales Erbe.",
+    footDesc:"Island in Echtzeit. Webcams, Wetter und Natur — live von der Insel.",
+    fl1h:"Erkunden",fl1a:"Interaktive Karte",fl1b:"Alle Webcams",fl1c:"Über",
+    fl2h:"Datenquellen",fl3h:"Island",fl3a:"Visit Iceland",fl3b:"Wettervorhersage",fl3c:"Sicheres Reisen",
+    fc1:"DIE NATUR IST UNSER ERBE",fc2:"RESPEKTIERE SIE — SCHÜTZE SIE",
+    regions:["Alle","Hauptstadt","S. Halbinsel","Westisland","Westfjorde","Nordisland","Ostisland","SO-Island","Südisland"],
+    filters:["Alle","Natur","Vulkan","Gletscher","Stadt","Straße"],
+  },
+  fr: {
+    logosub:"Montre-moi l'Islande",nmap:"CARTE",nweb:"WEBCAMS",nabt:"À PROPOS",ncon:"CONTACT",
+    hero:"MONTRE-MOI<br>L'ISLANDE",heroSub:"En direct du pays du feu et des glaces",
+    heroDesc:"Explorez l'Islande en temps réel grâce à notre réseau de webcams. Météo, nature et aventure — en direct de l'île.",
+    xplr:"EXPLORER LA CARTE",xplr2:"EXPLORER LA CARTE",scroll:"DÉFILER",
+    s1:"40+",sl1:"Caméras live",s2:"8",sl2:"Régions",s3:"24/7",sl3:"Flux en direct",s4:"5",sl4:"Langues",
+    mapEye:"Carte Interactive",mapTitle:"Explorer <span>l'Islande</span>",
+    mapSub:"Cliquez sur une épingle de caméra pour voir les images en direct",
+    leftTitle:"MONTRE-MOI<br>L'ISLANDE",leftDesc:"Explorez l'Islande en temps réel. Météo, nature et aventure — en direct de l'île.",
+    wbhdr:"WEBCAMS EN DIRECT",vwall:"VOIR TOUT",live:"EN DIRECT",vcam:"VOIR LA WEBCAM",
+    regh:"TOUTES LES RÉGIONS",wxh:"MÉTÉO ISLANDE",wwind:"Vent",wgust:"Rafales",whumid:"Humidité",wpress:"Pression",fcbtn:"PRÉVISIONS",
+    wbEye:"Flux en Direct",wbTitle:"Toutes les <span>Webcams</span>",wbSub:"Parcourez tous les flux de caméras en direct d'Islande — mis à jour toutes les 30 secondes",
+    abtEye:"À Propos",abtTitle:"Notre <span>Héritage</span>",
+    a1t:"En direct d'Islande",a1d:"ShowMe Iceland agrège des flux webcam en direct de Vegagerðin, LiveFromIceland et d'autres sources islandaises.",
+    a2t:"Météo en Temps Réel",a2d:"Les données météo proviennent directement de l'Office météorologique islandais via leur API ouverte.",
+    a3t:"La Nature est Notre Héritage",a3d:"Les paysages dramatiques d'Islande — glaciers, volcans, geysers et aurores boréales — sont un patrimoine mondial.",
+    footDesc:"L'Islande en temps réel. Webcams, météo et nature — en direct de l'île.",
+    fl1h:"Explorer",fl1a:"Carte Interactive",fl1b:"Toutes les Webcams",fl1c:"À Propos",
+    fl2h:"Sources de Données",fl3h:"Islande",fl3a:"Visit Iceland",fl3b:"Prévisions",fl3c:"Voyage Sûr",
+    fc1:"LA NATURE EST NOTRE HÉRITAGE",fc2:"RESPECTEZ-LA — PROTÉGEZ-LA",
+    regions:["Toutes","Capitale","Pén. Sud","Islande O.","Fjords O.","Islande N.","Islande E.","SE Islande","Islande S."],
+    filters:["Tout","Nature","Volcan","Glacier","Ville","Route"],
+  },
+  es: {
+    logosub:"Muéstrame Islandia",nmap:"MAPA",nweb:"WEBCAMS",nabt:"ACERCA",ncon:"CONTACTO",
+    hero:"MUÉSTRAME<br>ISLANDIA",heroSub:"En vivo desde la Tierra del Fuego y el Hielo",
+    heroDesc:"Explora Islandia en tiempo real a través de nuestra red de webcams. Clima, naturaleza y aventura — en vivo desde la isla.",
+    xplr:"EXPLORAR MAPA",xplr2:"EXPLORAR MAPA",scroll:"DESPLAZAR",
+    s1:"40+",sl1:"Cámaras live",s2:"8",sl2:"Regiones",s3:"24/7",sl3:"Transmisiones",s4:"5",sl4:"Idiomas",
+    mapEye:"Mapa Interactivo",mapTitle:"Explora <span>Islandia</span>",
+    mapSub:"Haz clic en cualquier marcador del mapa para ver las imágenes en vivo",
+    leftTitle:"MUÉSTRAME<br>ISLANDIA",leftDesc:"Explora Islandia en tiempo real. Clima, naturaleza y aventura — en vivo desde la isla.",
+    wbhdr:"WEBCAMS EN VIVO",vwall:"VER TODO",live:"EN VIVO",vcam:"VER WEBCAM",
+    regh:"TODAS LAS REGIONES",wxh:"CLIMA DE ISLANDIA",wwind:"Viento",wgust:"Ráfagas",whumid:"Humedad",wpress:"Presión",fcbtn:"PRONÓSTICO",
+    wbEye:"Transmisiones",wbTitle:"Todas las <span>Webcams</span>",wbSub:"Navega por todas las cámaras en vivo de Islandia — actualizadas cada 30 segundos",
+    abtEye:"Acerca",abtTitle:"Nuestro <span>Patrimonio</span>",
+    a1t:"En vivo desde Islandia",a1d:"ShowMe Iceland agrega transmisiones en vivo de Vegagerðin, LiveFromIceland y otras fuentes islandesas.",
+    a2t:"Clima en Tiempo Real",a2d:"Los datos meteorológicos provienen directamente de la Oficina Meteorológica de Islandia a través de su API abierta.",
+    a3t:"La Naturaleza es Nuestro Patrimonio",a3d:"Los dramáticos paisajes de Islandia — glaciares, volcanes, géiseres y auroras boreales — son un patrimonio global.",
+    footDesc:"Islandia en tiempo real. Webcams, clima y naturaleza — en vivo desde la isla.",
+    fl1h:"Explorar",fl1a:"Mapa Interactivo",fl1b:"Todas las Webcams",fl1c:"Acerca",
+    fl2h:"Fuentes de Datos",fl3h:"Islandia",fl3a:"Visit Iceland",fl3b:"Pronóstico",fl3c:"Viaje Seguro",
+    fc1:"LA NATURALEZA ES NUESTRO PATRIMONIO",fc2:"RESPÉTALA — PROTÉGELA",
+    regions:["Todas","Capital","Pen. Sur","Isl. Oeste","Fiordos O.","Isl. Norte","Isl. Este","SE Islandia","Isl. Sur"],
+    filters:["Todo","Naturaleza","Volcán","Glaciar","Ciudad","Carretera"],
+  }
+};
+
+let lang = 'en';
+function t(k) { return (TR[lang]||TR.en)[k] || ''; }
+
+function setLang(l, btn) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyTr();
+  renderList();
+  renderRegions();
+  renderGrid();
+  const fs = t('filters'), fbs = document.querySelectorAll('.filt');
+  fbs.forEach((b,i) => { if(fs[i]) b.textContent = fs[i]; });
+}
+
+function applyTr() {
+  const ids = ['logosub','nmap','nweb','nabt','ncon','hero','heroSub','heroDesc',
+    'xplr','xplr2','scroll','s1','sl1','s2','sl2','s3','sl3','s4','sl4',
+    'mapEye','mapTitle','mapSub','leftTitle','leftDesc','wbhdr','vwall','live','vcam',
+    'regh','wxh','wwind','wgust','whumid','wpress','fcbtn',
+    'wbEye','wbTitle','wbSub','abtEye','abtTitle',
+    'a1t','a1d','a2t','a2d','a3t','a3d','footDesc',
+    'fl1h','fl1a','fl1b','fl1c','fl2h','fl3h','fl3a','fl3b','fl3c','fc1','fc2'];
+  ids.forEach(k => {
+    const el = document.getElementById('t-'+k);
+    if (el) el.innerHTML = t(k);
+  });
+}
+
+// ── CAMERA DATA ───────────────────────────────────────
+const VG = 'https://www.vegagerdin.is/vgdata/vefmyndavelar/';
+
+// Mercator projection — lon:-24.6→-12.8, lat:63.0→66.7, SVG 720×460
+function proj(lon, lat) {
+  const x = (lon + 24.6) / 11.8 * 720;
+  const m = l => Math.log(Math.tan(Math.PI/4 + l*Math.PI/360));
+  const y = 460 - (m(lat) - m(63.0)) / (m(66.7) - m(63.0)) * 460;
+  return [Math.round(x*10)/10, Math.round(y*10)/10];
+}
+
+const TC = { n:'#7ac848', e:'#e05a2b', j:'#70c8f0', b:'#daa520', r:'#c8b870', h:'#40a8d8' };
+
+const CAMS = [
+  // Road cams — direct JPG streams from Vegagerðin
+  {id:1,  name:"Ártúnsbrekka",       reg:1, lat:64.137,lon:-21.975, imgs:["artunsbrekka",4],      wx:1,   tags:["r","b"], url:"https://umferdin.is/en/cameras"},
+  {id:2,  name:"Kringlan",            reg:1, lat:64.130,lon:-21.960, imgs:["kringlan",4],           wx:1,   tags:["r","b"], url:"https://umferdin.is/en/cameras"},
+  {id:3,  name:"Bústaðabrú",          reg:1, lat:64.118,lon:-21.958, imgs:["bustadabru",4],         wx:1,   tags:["r","b"], url:"https://umferdin.is/en/cameras"},
+  {id:4,  name:"Arnarneshæð",         reg:1, lat:64.098,lon:-21.950, imgs:["arnarneshaed",4],       wx:1,   tags:["r","b"], url:"https://umferdin.is/en/cameras"},
+  {id:5,  name:"Engidalur",           reg:1, lat:64.060,lon:-21.966, imgs:["engidalur",4],          wx:1,   tags:["r","b"], url:"https://umferdin.is/en/cameras"},
+  {id:6,  name:"Leirvogstungumelar",  reg:1, lat:64.195,lon:-21.810, imgs:["leirvogstungumelar",4],wx:1,   tags:["r"],     url:"https://umferdin.is/en/cameras"},
+  {id:7,  name:"Kambar",              reg:2, lat:64.017,lon:-21.333, imgs:["kambar",4],             wx:1,   tags:["r","n"], url:"https://umferdin.is/en/cameras"},
+  {id:8,  name:"Hellisheiði",         reg:2, lat:64.030,lon:-21.380, imgs:["hellisheidi",3],        wx:1,   tags:["r","n"], url:"https://umferdin.is/en/cameras"},
+  {id:9,  name:"Hellisbrú",           reg:2, lat:63.938,lon:-21.032, imgs:["hellisbru",4],          wx:422, tags:["r"],     url:"https://umferdin.is/en/cameras"},
+  {id:10, name:"Kotströnd",           reg:8, lat:63.940,lon:-20.900, imgs:["kotstrond",3],          wx:422, tags:["r"],     url:"https://umferdin.is/en/cameras"},
+  // Landmark / nature cams
+  {id:11, name:"Tjörnin",             reg:1, lat:64.146,lon:-21.943, imgs:null, wx:1,   tags:["b"],     url:"https://livefromiceland.is/webcam/reykjavikurtjorn/"},
+  {id:12, name:"Austurvöllur",        reg:1, lat:64.147,lon:-21.940, imgs:null, wx:1,   tags:["b"],     url:"https://livefromiceland.is/webcam/austurvollur/"},
+  {id:13, name:"Hekla",               reg:8, lat:63.980,lon:-19.666, imgs:null, wx:422, tags:["e"],     url:"https://livefromiceland.is/webcam/hekla/"},
+  {id:14, name:"Eyjafjallajökull",    reg:8, lat:63.630,lon:-19.613, imgs:null, wx:422, tags:["e","j"], url:"https://livefromiceland.is/webcam/eyjafjallajokull/"},
+  {id:15, name:"Katla – Háfell",      reg:8, lat:63.670,lon:-19.060, imgs:null, wx:422, tags:["e","j"], url:"https://livefromiceland.is/webcam/hafell-katla/"},
+  {id:16, name:"Hagafell",            reg:2, lat:63.862,lon:-22.482, imgs:null, wx:1,   tags:["e"],     url:"https://livefromiceland.is/webcam/hagafell/"},
+  {id:17, name:"Akureyri",            reg:5, lat:65.683,lon:-18.112, imgs:null, wx:422, tags:["b"],     url:"https://livefromiceland.is/webcam/akureyri/"},
+  {id:18, name:"Hlíðarfjall",         reg:5, lat:65.700,lon:-18.070, imgs:null, wx:422, tags:["n"],     url:"https://livefromiceland.is/webcam/akureyri-hlidarfjall/"},
+  {id:19, name:"Jökulsárlón",         reg:7, lat:64.078,lon:-16.181, imgs:null, wx:572, tags:["j","n"], url:"https://www.skylinewebcams.com/en/webcam/iceland/austurland/hofn/jokulsarlon.html"},
+  {id:20, name:"Snæfellsjökull",      reg:3, lat:64.808,lon:-23.775, imgs:null, wx:1,tags:["j","n"], url:"https://livefromiceland.is/"},
+  {id:21, name:"Kirkjufell",          reg:3, lat:64.940,lon:-23.305, imgs:null, wx:1,tags:["n"],     url:"https://livefromiceland.is/"},
+  {id:22, name:"Húsavík",             reg:5, lat:66.044,lon:-17.339, imgs:null, wx:422, tags:["h","b"], url:"https://www.webcamtaxi.com/en/iceland.html"},
+  {id:23, name:"Mývatn",              reg:5, lat:65.600,lon:-17.005, imgs:null, wx:422, tags:["n"],     url:"https://livefromiceland.is/"},
+  {id:24, name:"Goðafoss",            reg:5, lat:65.683,lon:-17.550, imgs:null, wx:422, tags:["n"],     url:"https://livefromiceland.is/"},
+  {id:25, name:"Þingvellir",          reg:1, lat:64.255,lon:-21.130, imgs:null, wx:1,   tags:["n","b"], url:"https://livefromiceland.is/"},
+  {id:26, name:"Gullfoss",            reg:8, lat:64.326,lon:-20.121, imgs:null, wx:422, tags:["n"],     url:"https://livefromiceland.is/"},
+  {id:27, name:"Geysir – Strokkur",   reg:8, lat:64.313,lon:-20.302, imgs:null, wx:422, tags:["n"],     url:"https://livefromiceland.is/"},
+  {id:28, name:"Seljalandsfoss",      reg:8, lat:63.616,lon:-19.986, imgs:null, wx:422, tags:["n"],     url:"https://livefromiceland.is/"},
+  {id:29, name:"Vík í Mýrdal",        reg:8, lat:63.419,lon:-19.005, imgs:null, wx:422, tags:["b","n"], url:"https://www.vegagerdin.is/"},
+  {id:30, name:"Vestmannaeyjar",      reg:8, lat:63.440,lon:-20.270, imgs:null, wx:422, tags:["e","h"], url:"https://www.vegagerdin.is/"},
+  {id:31, name:"Höfn",                reg:7, lat:64.252,lon:-15.212, imgs:null, wx:572, tags:["h","b"], url:"https://www.vegagerdin.is/"},
+  {id:32, name:"Egilsstaðir",         reg:6, lat:65.270,lon:-14.394, imgs:null, wx:572, tags:["b"],     url:"https://www.vegagerdin.is/"},
+  {id:33, name:"Seyðisfjörður",       reg:6, lat:65.256,lon:-13.993, imgs:null, wx:572, tags:["b","h"], url:"https://www.vegagerdin.is/"},
+  {id:34, name:"Ísafjörður",          reg:4, lat:66.075,lon:-23.135, imgs:null, wx:191,tags:["b","h"], url:"https://www.vegagerdin.is/"},
+  {id:35, name:"Skaftafell",          reg:7, lat:63.998,lon:-16.968, imgs:null, wx:572, tags:["n","j"], url:"https://livefromiceland.is/"},
+  {id:36, name:"Þórsmörk",            reg:8, lat:63.683,lon:-19.499, imgs:null, wx:422, tags:["n"],     url:"https://livefromiceland.is/"},
+  {id:37, name:"Dalvík",              reg:5, lat:65.970,lon:-18.527, imgs:null, wx:422, tags:["h"],     url:"https://www.vegagerdin.is/"},
+  {id:38, name:"Siglufjörður",        reg:5, lat:66.153,lon:-18.905, imgs:null, wx:422, tags:["h","b"], url:"https://www.vegagerdin.is/"},
+  {id:39, name:"Stykkishólmur",       reg:3, lat:65.074,lon:-22.729, imgs:null, wx:1,tags:["h","b"], url:"https://www.vegagerdin.is/"},
+  {id:40, name:"Landmannalaugar",     reg:8, lat:63.984,lon:-19.066, imgs:null, wx:422, tags:["n"],     url:"https://livefromiceland.is/"},
+];
+
+// ── STATE ─────────────────────────────────────────────
+let activeFilter = '', activeReg = 0, activeCam = null;
+let favs = new Set(), wxCache = {}, refreshTimer = null, subIdx = 0, camUrl = '#';
+
+function getVisible() {
+  return CAMS.filter(c =>
+    (!activeFilter || c.tags.includes(activeFilter)) &&
+    (activeReg === 0 || c.reg === activeReg)
+  );
+}
+function regName(r) { return (t('regions')||[])[r] || ''; }
+
+// ── PINS ──────────────────────────────────────────────
+function renderPins() {
+  const g = document.getElementById('pins');
+  if (!g) return;
+  g.innerHTML = '';
+  const ns = 'http://www.w3.org/2000/svg';
+  const vis = new Set(getVisible().map(c => c.id));
+
+  CAMS.forEach(cam => {
+    const [px, py] = proj(cam.lon, cam.lat);
+    if (px < 0 || px > 720 || py < 0 || py > 460) return;
+    const col = TC[cam.tags[0]] || '#c8b870';
+    const on = activeCam && activeCam.id === cam.id;
+    const isVis = vis.has(cam.id);
+
+    const grp = document.createElementNS(ns, 'g');
+    grp.setAttribute('id', 'pin-'+cam.id);
+    grp.setAttribute('transform', `translate(${px},${py})`);
+    grp.setAttribute('opacity', isVis ? '1' : '0.18');
+    grp.style.cursor = 'pointer';
+
+    if (isVis) {
+      const pulse = document.createElementNS(ns, 'circle');
+      pulse.setAttribute('class', 'pulse');
+      pulse.setAttribute('r', '8');
+      pulse.setAttribute('fill', on ? 'rgba(176,32,32,.25)' : `rgba(218,165,32,.12)`);
+      pulse.setAttribute('stroke', on ? 'rgba(176,32,32,.4)' : 'rgba(218,165,32,.28)');
+      pulse.setAttribute('stroke-width', '0.8');
+      grp.appendChild(pulse);
+    }
+
+    const outer = document.createElementNS(ns, 'circle');
+    outer.setAttribute('r', '9');
+    outer.setAttribute('fill', on ? 'rgba(176,32,32,.2)' : 'rgba(218,165,32,.08)');
+    outer.setAttribute('stroke', on ? 'rgba(176,32,32,.5)' : 'rgba(218,165,32,.25)');
+    outer.setAttribute('stroke-width', '0.9');
+    grp.appendChild(outer);
+
+    const inner = document.createElementNS(ns, 'circle');
+    inner.setAttribute('r', '5.5');
+    inner.setAttribute('fill', on ? '#a01818' : 'rgba(5,3,14,.92)');
+    inner.setAttribute('stroke', on ? '#f09090' : col);
+    inner.setAttribute('stroke-width', '1.2');
+    if (isVis) inner.setAttribute('filter', 'url(#pin-glow)');
+    grp.appendChild(inner);
+
+    const dot = document.createElementNS(ns, 'circle');
+    dot.setAttribute('r', '2');
+    dot.setAttribute('fill', col);
+    grp.appendChild(dot);
+
+    grp.addEventListener('mouseenter', e => showTip(e, cam));
+    grp.addEventListener('mousemove', moveTip);
+    grp.addEventListener('mouseleave', hideTip);
+    grp.addEventListener('click', () => selectCam(cam));
+    g.appendChild(grp);
+  });
+}
+
+// ── CAM LIST (sidebar) ────────────────────────────────
+function renderList() {
+  const list = document.getElementById('cam-list');
+  if (!list) return;
+  list.innerHTML = '';
+  getVisible().slice(0, 15).forEach(cam => {
+    const d = document.createElement('div');
+    d.className = 'cam-item' + (activeCam && activeCam.id === cam.id ? ' active' : '');
+    d.id = 'ci-' + cam.id;
+
+    const img = document.createElement('img');
+    img.className = 'cam-thumb';
+    img.src = cam.imgs
+      ? `${VG}${cam.imgs[0]}_1.jpg?t=${Date.now()}`
+      : `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='34'%3E%3Crect width='100%25' height='100%25' fill='%230a0a20'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' fill='%23b8860b' font-size='14' dominant-baseline='middle'%3E⊙%3C/text%3E%3C/svg%3E`;
+    if (cam.imgs) img.onerror = () => { img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='34'%3E%3Crect width='100%25' height='100%25' fill='%230a0a20'/%3E%3C/svg%3E"; };
+    d.appendChild(img);
+
+    const info = document.createElement('div');
+    info.className = 'cam-info';
+    info.innerHTML = `<div class="cam-name">${cam.name}</div><div class="cam-loc">${regName(cam.reg)}</div>`;
+    d.appendChild(info);
+
+    const fav = document.createElement('button');
+    fav.className = 'cam-fav' + (favs.has(cam.id) ? ' on' : '');
+    fav.textContent = favs.has(cam.id) ? '★' : '☆';
+    fav.onclick = e => { e.stopPropagation(); toggleFavCam(cam.id, fav); };
+    d.appendChild(fav);
+
+    d.onclick = () => selectCam(cam);
+    list.appendChild(d);
+  });
+}
+
+// ── FILTER BUTTONS ────────────────────────────────────
+function buildFilters() {
+  const row = document.getElementById('filter-row');
+  if (!row) return;
+  row.innerHTML = '';
+  const fs = t('filters');
+  const keys = ['', 'n', 'e', 'j', 'b', 'r'];
+  keys.forEach((k, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'filt' + (k === activeFilter ? ' on' : '');
+    btn.textContent = fs[i] || k;
+    btn.onclick = () => {
+      activeFilter = k;
+      document.querySelectorAll('.filt').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      renderPins(); renderList(); renderGrid();
+    };
+    row.appendChild(btn);
+  });
+}
+
+// ── REGIONS ───────────────────────────────────────────
+const RC = ['#c8a060','#a08040','#907040','#806030','#706028','#887830','#785a28','#685020','#786040'];
+function renderRegions() {
+  const list = document.getElementById('reg-list');
+  if (!list) return;
+  list.innerHTML = '';
+  (t('regions')||[]).forEach((name, i) => {
+    const d = document.createElement('div');
+    d.className = 'reg-item' + (i === 0 ? ' all' : '') + (activeReg === i ? ' on' : '');
+    d.innerHTML = `<span class="reg-dot" style="background:${RC[i]||'#888'}"></span>${name}`;
+    d.onclick = () => {
+      activeReg = i;
+      document.querySelectorAll('.reg-item').forEach(el => el.classList.remove('on'));
+      d.classList.add('on');
+      renderPins(); renderList(); renderGrid();
+    };
+    list.appendChild(d);
+  });
+}
+
+// ── WEBCAM GRID ───────────────────────────────────────
+function renderGrid() {
+  const grid = document.getElementById('webcam-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  getVisible().forEach(cam => {
+    const tagKey = cam.tags[0];
+    const tagLabels = { n:'Nature', e:'Volcano', j:'Glacier', b:'City', r:'Road', h:'Harbour' };
+
+    const card = document.createElement('div');
+    card.className = 'webcam-card';
+    card.onclick = () => {
+      selectCam(cam);
+      document.getElementById('map-section').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    const imgWrap = document.createElement('div');
+    imgWrap.className = 'wc-img-wrap';
+
+    const img = document.createElement('img');
+    img.className = 'wc-img';
+    img.loading = 'lazy';
+    img.src = cam.imgs
+      ? `${VG}${cam.imgs[0]}_1.jpg`
+      : `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='170'%3E%3Crect width='100%25' height='100%25' fill='%23050310'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%23b8860b' font-size='22'%3E⊙%3C/text%3E%3C/svg%3E`;
+    if (cam.imgs) img.onerror = () => { img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='170'%3E%3Crect width='100%25' height='100%25' fill='%23050310'/%3E%3C/svg%3E"; };
+    imgWrap.appendChild(img);
+
+    imgWrap.innerHTML += `
+      <div class="wc-live"><span class="wc-dot"></span>LIVE</div>
+      <div class="wc-tag tag-${tagKey}">${tagLabels[tagKey]||tagKey}</div>`;
+    imgWrap.prepend(img);
+
+    card.appendChild(imgWrap);
+    card.innerHTML += `<div class="wc-body"><div class="wc-name">${cam.name}</div><div class="wc-region">${regName(cam.reg)}</div></div>`;
+    grid.appendChild(card);
+  });
+}
+
+// ── SELECT CAM ────────────────────────────────────────
+function selectCam(cam) {
+  activeCam = cam;
+  camUrl = cam.url || '#';
+  subIdx = 0;
+  clearInterval(refreshTimer);
+  renderPins();
+  renderList();
+
+  document.getElementById('live-name').textContent = cam.name;
+  document.getElementById('live-region').textContent = regName(cam.reg);
+
+  const mi = document.getElementById('live-img');
+  const sw = document.getElementById('live-subs');
+  sw.innerHTML = '';
+
+  if (cam.imgs) {
+    const [sl, ct] = cam.imgs;
+    const urls = Array.from({length: ct}, (_, i) => `${VG}${sl}_${i+1}.jpg`);
+    loadImg(mi, urls[0]);
+
+    urls.slice(0, 3).forEach((url, i) => {
+      const s = document.createElement('img');
+      s.className = 'live-sub' + (i === 0 ? ' on' : '');
+      s.src = url + '?t=' + Date.now();
+      s.onerror = () => { s.style.opacity = '.1'; };
+      s.onclick = () => {
+        subIdx = i;
+        loadImg(mi, url);
+        document.querySelectorAll('.live-sub').forEach(x => x.classList.remove('on'));
+        s.classList.add('on');
+      };
+      sw.appendChild(s);
+    });
+
+    refreshTimer = setInterval(() => {
+      const ts = '?t=' + Date.now();
+      loadImg(mi, `${VG}${sl}_${subIdx+1}.jpg${ts}`);
+      document.querySelectorAll('.live-sub').forEach((s, i) => {
+        s.src = `${VG}${sl}_${i+1}.jpg${ts}`;
+      });
+    }, 30000);
+  } else {
+    mi.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='295' height='185'%3E%3Crect width='100%25' height='100%25' fill='%2303020e'/%3E%3Ctext x='50%25' y='40%25' text-anchor='middle' fill='%23b8860b' font-size='22' dominant-baseline='middle'%3E⊙%3C/text%3E%3Ctext x='50%25' y='63%25' text-anchor='middle' fill='%23c8a860' font-size='11' font-family='serif' dominant-baseline='middle'%3EClick VIEW WEBCAM to open live feed%3C/text%3E%3C/svg%3E`;
+  }
+
+  fetchWx(cam.wx || 1);
+
+  const ci = document.getElementById('ci-'+cam.id);
+  if (ci) { ci.classList.add('active'); ci.scrollIntoView({ block:'nearest' }); }
+}
+
+function loadImg(el, url) {
+  el.style.opacity = '.3';
+  const tmp = new Image();
+  tmp.onload = () => { el.src = url; el.style.opacity = '1'; };
+  tmp.src = url;
+}
+
+function openCam() { if (camUrl && camUrl !== '#') window.open(camUrl, '_blank'); }
+
+function toggleFav() {
+  if (activeCam) toggleFavCam(activeCam.id, document.getElementById('fav-btn'));
+}
+function toggleFavCam(id, btn) {
+  if (favs.has(id)) { favs.delete(id); if(btn){btn.textContent='☆';btn.classList.remove('on');} }
+  else              { favs.add(id);    if(btn){btn.textContent='★';btn.classList.add('on');} }
+  renderList();
+}
+
+// ── WEATHER ───────────────────────────────────────────
+async function fetchWx(stn) {
+  if (wxCache[stn]) { applyWx(wxCache[stn]); return; }
+  try {
+    const r = await fetch(`https://apis.is/weather/observations/en?stations=${stn}&time=1h&anytime=1`);
+    const d = await r.json();
+    if (d.results && d.results.length) { wxCache[stn] = d.results[0]; applyWx(d.results[0]); }
+  } catch(e) {}
+}
+
+function wxIcon(w, temp) {
+  if (!w) return temp < 0 ? '❄️' : '🌡️';
+  const d = w.toLowerCase();
+  if (d.includes('snow') || d.includes('blizzard')) return '❄️';
+  if (d.includes('rain') || d.includes('drizzle'))  return '🌧️';
+  if (d.includes('fog')  || d.includes('mist'))     return '🌫️';
+  if (d.includes('cloud'))                           return '☁️';
+  if (d.includes('clear') || d.includes('sun'))     return '☀️';
+  return '⛅';
+}
+
+function applyWx(wx) {
+  const T = wx.T || '–';
+  document.getElementById('wx-temp').textContent  = T + '°C';
+  document.getElementById('live-temp').textContent = T + '°C';
+  document.getElementById('wx-wind').textContent  = (wx.F||'–') + ' m/s';
+  document.getElementById('wx-gust').textContent  = (wx.FG||'–') + ' m/s';
+  document.getElementById('wx-humid').textContent = (wx.RH||'–') + '%';
+  document.getElementById('wx-press').textContent = (wx.P||'–') + ' hPa';
+  document.getElementById('wx-desc').textContent  = wx.W || '';
+  document.getElementById('wx-icon').textContent  = wxIcon(wx.W, parseFloat(wx.T));
+  document.getElementById('wx-stn').textContent   = 'Station: ' + wx.name + (wx.time ? ' · ' + wx.time.slice(0,16) : '');
+  document.getElementById('live-wind').textContent = (wx.F||'–') + ' m/s';
+  document.getElementById('live-dir').textContent  = wx.D || '–';
+}
+
+// ── TOOLTIP ───────────────────────────────────────────
+const tipEl = document.getElementById('map-tip');
+const mapTop = document.getElementById('map-top');
+
+function showTip(e, cam) {
+  tipEl.innerHTML = `<b style="font-family:Cinzel,serif;color:#daa520;font-size:11px">${cam.name}</b><br><span style="color:#c8a060;font-size:10px">${regName(cam.reg)}</span>`;
+  tipEl.style.display = 'block';
+  moveTip(e);
+}
+function moveTip(e) {
+  const r = mapTop.getBoundingClientRect();
+  let tx = e.clientX - r.left + 12, ty = e.clientY - r.top - 10;
+  if (tx + 180 > r.width) tx = e.clientX - r.left - 180;
+  tipEl.style.left = tx + 'px';
+  tipEl.style.top  = ty + 'px';
+}
+function hideTip() { tipEl.style.display = 'none'; }
+
+// ── STAR PARTICLES ────────────────────────────────────
+function initStars() {
+  const c = document.getElementById('star-canvas');
+  function resize() { c.width = window.innerWidth; c.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  const ctx = c.getContext('2d');
+
+  const stars = Array.from({length: 160}, () => ({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    r: Math.random() * 1.1 + 0.15,
+    vx: (Math.random() - .5) * .08,
+    vy: (Math.random() - .5) * .06,
+    a: Math.random() * .5 + .08,
+    gold: Math.random() > .65,
+    tw: Math.random() * Math.PI * 2,
+    ts: Math.random() * .015 + .005,
+  }));
+
+  function draw() {
+    ctx.clearRect(0, 0, c.width, c.height);
+    stars.forEach(s => {
+      s.tw += s.ts;
+      const alpha = s.a * (.6 + .4 * Math.sin(s.tw));
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = s.gold
+        ? `rgba(218,165,32,${alpha})`
+        : `rgba(180,210,255,${alpha * .7})`;
+      ctx.fill();
+      s.x += s.vx; s.y += s.vy;
+      if (s.x < 0) s.x = c.width;
+      if (s.x > c.width) s.x = 0;
+      if (s.y < 0) s.y = c.height;
+      if (s.y > c.height) s.y = 0;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// ── AURORA (hero) ─────────────────────────────────────
+function initHeroAurora() {
+  const c = document.getElementById('aurora-canvas');
+  const hero = document.getElementById('hero');
+  function resize() { c.width = hero.clientWidth; c.height = hero.clientHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  const ctx = c.getContext('2d');
+
+  const bands = [
+    { y:.06, a:28, f:.007, s:.32, col:[0,230,100],   op:.05 },
+    { y:.14, a:20, f:.010, s:.48, col:[0,200,180],   op:.04 },
+    { y:.20, a:14, f:.013, s:.38, col:[80,150,255],  op:.035},
+    { y:.04, a:36, f:.006, s:.42, col:[180,80,255],  op:.03 },
+    { y:.30, a:12, f:.009, s:.28, col:[0,255,150],   op:.025},
+  ];
+  let t = 0;
+
+  function draw() {
+    const w = c.width, h = c.height;
+    ctx.clearRect(0, 0, w, h);
+    bands.forEach(b => {
+      const by = h * b.y;
+      ctx.beginPath();
+      ctx.moveTo(0, by);
+      for (let x = 0; x <= w; x += 3) {
+        const y = by
+          + Math.sin(x * b.f + t * b.s) * b.a
+          + Math.sin(x * b.f * 1.8 + t * b.s * 1.4) * b.a * .55
+          + Math.sin(x * b.f * .5  + t * b.s * .8)  * b.a * .3;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(w, 0); ctx.lineTo(0, 0);
+      ctx.closePath();
+      const g = ctx.createLinearGradient(0, 0, 0, by + b.a * 2.5);
+      g.addColorStop(0, `rgba(${b.col},${b.op})`);
+      g.addColorStop(.5, `rgba(${b.col},${b.op * .5})`);
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g;
+      ctx.fill();
+    });
+    t += .012;
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// ── MAP AURORA ────────────────────────────────────────
+function initMapAurora() {
+  const c = document.getElementById('map-aurora');
+  const wrap = document.getElementById('map-top');
+  function resize() { c.width = wrap.clientWidth; c.height = wrap.clientHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  const ctx = c.getContext('2d');
+  const bands = [
+    { y:.07, a:15, f:.010, s:.30, col:[0,230,110], op:.038 },
+    { y:.14, a:10, f:.014, s:.46, col:[0,200,200], op:.030 },
+    { y:.03, a:20, f:.008, s:.38, col:[90,140,255],op:.025 },
+  ];
+  let t = 0;
+  function draw() {
+    const w = c.width, h = c.height;
+    ctx.clearRect(0, 0, w, h);
+    bands.forEach(b => {
+      const by = h * b.y;
+      ctx.beginPath(); ctx.moveTo(0, by);
+      for (let x = 0; x <= w; x += 3) {
+        const y = by + Math.sin(x*b.f + t*b.s)*b.a + Math.sin(x*b.f*1.7+t*b.s*1.3)*b.a*.5;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(w, 0); ctx.lineTo(0, 0); ctx.closePath();
+      const g = ctx.createLinearGradient(0, 0, 0, by+b.a*2);
+      g.addColorStop(0, `rgba(${b.col},${b.op})`);
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g; ctx.fill();
+    });
+    t += .010;
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// ── NAV SCROLL ────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('nav');
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+
+  // Active nav link based on scroll position
+  const sections = ['map-section','webcams-section','about-section','footer'];
+  const links = document.querySelectorAll('.nav-link');
+  let current = 0;
+  sections.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el && window.scrollY >= el.offsetTop - 120) current = i;
+  });
+  links.forEach((l, i) => l.classList.toggle('active', i === current));
+});
+
+// ── FADE-IN OBSERVER ─────────────────────────────────
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: .12 });
+document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
+
+// ── INIT ──────────────────────────────────────────────
+applyTr();
+buildFilters();
+renderRegions();
+renderList();
+renderPins();
+renderGrid();
+initStars();
+initHeroAurora();
+initMapAurora();
+fetchWx(1); // Default: Reykjavík weather
+selectCam(CAMS[0]);
+</script>
+</body>
+</html>
