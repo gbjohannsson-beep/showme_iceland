@@ -2,1159 +2,770 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ShowMe Iceland — Live Webcams</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cinzel+Decorative:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#03020e;--bg1:#08060f;
-  --gold:#b8860b;--gold2:#daa520;--gold3:#f0c84a;
-  --golddim:rgba(184,134,11,.18);
-  --red:#b02020;
-  --parch:#ecdfa8;--parch2:#c8a860;--parch3:#806030;
-  --ice:#c8e8ff;
-  --border:rgba(218,165,32,.2);
-}
+:root{--bg:#03020e;--gold:#b8860b;--gold2:#daa520;--parch:#ecdfa8;--parch2:#c8a860;--parch3:#806030;--border:rgba(218,165,32,.2);--red:#b02020}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--parch);font-family:'Crimson Text',Georgia,serif;overflow-x:hidden}
-a{color:inherit;text-decoration:none}
-button{cursor:pointer;font-family:inherit;border:none;background:none}
-
-/* ── STARS ── */
+a{color:inherit;text-decoration:none}button{cursor:pointer;font-family:inherit;border:none;background:none}
 #stars{position:fixed;inset:0;z-index:0;pointer-events:none}
-
-/* ── NAV ── */
-#nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  background:rgba(3,2,14,.96);
-  border-bottom:1px solid var(--border);
-  backdrop-filter:blur(16px);
-  transition:box-shadow .3s;
-}
-#nav.scrolled{box-shadow:0 2px 30px rgba(218,165,32,.08)}
-.nav-inner{max-width:1400px;margin:0 auto;height:60px;display:flex;align-items:center;padding:0 20px;gap:0}
+/* NAV */
+#nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(3,2,14,.96);border-bottom:1px solid var(--border);backdrop-filter:blur(16px)}
+#nav.sc{box-shadow:0 2px 30px rgba(218,165,32,.08)}
+.navi{max-width:1400px;margin:0 auto;height:60px;display:flex;align-items:center;padding:0 20px}
 .logo{display:flex;align-items:center;gap:11px;padding-right:22px;border-right:1px solid var(--border);margin-right:18px;flex-shrink:0}
-.logo-rune{width:36px;height:36px;animation:rune-glow 3s ease-in-out infinite alternate}
-@keyframes rune-glow{from{filter:drop-shadow(0 0 4px rgba(218,165,32,.3))}to{filter:drop-shadow(0 0 14px rgba(218,165,32,.8))}}
-.logo h1{font-family:'Cinzel Decorative',serif;font-size:13.5px;color:var(--gold2);letter-spacing:.06em;text-shadow:0 0 18px rgba(218,165,32,.5)}
-.logo p{font-size:8.5px;color:var(--parch3);letter-spacing:.2em;text-transform:uppercase}
-.nav-links{display:flex}
-.nl{display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 14px;height:60px;justify-content:center;color:var(--parch3);font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.13em;border-bottom:2px solid transparent;transition:all .2s;cursor:pointer}
+.logo-rune{width:36px;height:36px;animation:rg 3s ease-in-out infinite alternate}
+@keyframes rg{from{filter:drop-shadow(0 0 4px rgba(218,165,32,.3))}to{filter:drop-shadow(0 0 14px rgba(218,165,32,.8))}}
+.logo h1{font-family:'Cinzel Decorative',serif;font-size:13px;color:var(--gold2)}
+.logo p{font-size:8px;color:var(--parch3);letter-spacing:.2em;text-transform:uppercase}
+.nls{display:flex}
+.nl{display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 13px;height:60px;justify-content:center;color:var(--parch3);font-family:'Cinzel',serif;font-size:8px;letter-spacing:.12em;border-bottom:2px solid transparent;transition:all .2s}
 .nl svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.5}
 .nl:hover,.nl.on{color:var(--gold2);border-bottom-color:var(--gold2)}
-.nav-r{margin-left:auto;display:flex;align-items:center;gap:5px}
-.lb{display:flex;align-items:center;gap:3px;padding:3px 7px;border:1px solid transparent;border-radius:2px;color:var(--parch3);font-family:'Cinzel',serif;font-size:8px;letter-spacing:.1em;transition:all .15s}
-.lb:hover{color:var(--parch);border-color:var(--border)}
-.lb.on{color:var(--gold2);border-color:var(--gold);background:rgba(184,134,11,.1)}
-.flag{width:16px;height:11px;border-radius:1px;overflow:hidden;flex-shrink:0}
-
-/* ── HERO ── */
+.nav-r{margin-left:auto;display:flex;gap:4px}
+.lb{display:flex;align-items:center;gap:3px;padding:3px 6px;border:1px solid transparent;border-radius:2px;color:var(--parch3);font-family:'Cinzel',serif;font-size:7.5px;letter-spacing:.09em;transition:all .15s}
+.lb:hover{color:var(--parch);border-color:var(--border)}.lb.on{color:var(--gold2);border-color:var(--gold);background:rgba(184,134,11,.1)}
+.flag{width:15px;height:10px;border-radius:1px;overflow:hidden;flex-shrink:0}
+/* HERO */
 #hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;padding-top:60px}
 #aurora{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
 #hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,2,14,.2) 0%,rgba(3,2,14,0) 30%,rgba(3,2,14,0) 70%,rgba(3,2,14,.9) 100%);z-index:2;pointer-events:none}
-.hero-content{position:relative;z-index:3;text-align:center;padding:0 24px;max-width:880px}
-.rune-sep{display:flex;align-items:center;gap:14px;justify-content:center;margin-bottom:22px;opacity:.45}
-.rune-sep::before,.rune-sep::after{content:'';flex:1;max-width:110px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
-.rune-sep::after{background:linear-gradient(90deg,var(--gold),transparent)}
-.rune-sep span{color:var(--gold2);font-size:16px;letter-spacing:8px}
-.hero-h{font-family:'Cinzel Decorative',serif;font-size:clamp(44px,8vw,96px);line-height:.95;font-weight:700;background:linear-gradient(135deg,#f5d060 0%,#daa520 35%,#b8860b 65%,#f0c84a 100%);background-size:300%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shimmer 6s ease-in-out infinite;letter-spacing:.02em;margin-bottom:8px}
-@keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-.hero-sub{font-family:'Cinzel',serif;font-size:clamp(11px,1.6vw,16px);color:var(--gold2);letter-spacing:.28em;opacity:.8;margin-bottom:24px}
-.hero-desc{font-size:clamp(14px,1.6vw,18px);color:var(--parch2);line-height:1.7;font-style:italic;max-width:580px;margin:0 auto 36px}
-.hero-cta{display:inline-flex;align-items:center;gap:9px;padding:13px 28px;border:1px solid var(--gold2);border-radius:3px;color:var(--gold2);font-family:'Cinzel',serif;font-size:10px;letter-spacing:.18em;background:rgba(184,134,11,.1);transition:all .28s}
-.hero-cta:hover{background:rgba(184,134,11,.24);box-shadow:0 0 28px rgba(218,165,32,.18);transform:translateY(-2px)}
-.hero-cta svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.5}
-.scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--parch3);font-family:'Cinzel',serif;font-size:7.5px;letter-spacing:.2em;animation:bob 2.5s ease-in-out infinite}
-.scroll-hint svg{width:18px;height:18px;stroke:var(--gold);fill:none;stroke-width:1.5}
+.hcont{position:relative;z-index:3;text-align:center;padding:0 24px;max-width:860px}
+.rsep{display:flex;align-items:center;gap:14px;justify-content:center;margin-bottom:22px;opacity:.4}
+.rsep::before,.rsep::after{content:'';flex:1;max-width:110px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+.rsep::after{background:linear-gradient(90deg,var(--gold),transparent)}
+.rsep span{color:var(--gold2);font-size:15px;letter-spacing:7px}
+.hh{font-family:'Cinzel Decorative',serif;font-size:clamp(44px,8vw,94px);line-height:.95;font-weight:700;background:linear-gradient(135deg,#f5d060 0%,#daa520 35%,#b8860b 65%,#f0c84a 100%);background-size:300%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 6s ease-in-out infinite;letter-spacing:.02em;margin-bottom:8px}
+@keyframes sh{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.hs{font-family:'Cinzel',serif;font-size:clamp(10px,1.5vw,15px);color:var(--gold2);letter-spacing:.26em;opacity:.8;margin-bottom:22px}
+.hd{font-size:clamp(14px,1.5vw,17px);color:var(--parch2);line-height:1.7;font-style:italic;max-width:560px;margin:0 auto 34px}
+.hcta{display:inline-flex;align-items:center;gap:9px;padding:12px 26px;border:1px solid var(--gold2);border-radius:3px;color:var(--gold2);font-family:'Cinzel',serif;font-size:9.5px;letter-spacing:.17em;background:rgba(184,134,11,.1);transition:all .28s}
+.hcta:hover{background:rgba(184,134,11,.24);box-shadow:0 0 24px rgba(218,165,32,.16);transform:translateY(-2px)}
+.hcta svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.5}
+.schint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--parch3);font-family:'Cinzel',serif;font-size:7px;letter-spacing:.2em;animation:bob 2.5s ease-in-out infinite}
+.schint svg{width:17px;height:17px;stroke:var(--gold);fill:none;stroke-width:1.5}
 @keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(5px)}}
-
-/* ── STAT BAR ── */
-.stat-bar{position:relative;z-index:5;background:rgba(5,3,16,.92);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;justify-content:center;gap:60px}
-.stat-item{text-align:center}
-.stat-n{font-family:'Cinzel',serif;font-size:24px;color:var(--gold2);display:block;line-height:1}
-.stat-l{font-size:9.5px;color:var(--parch3);letter-spacing:.13em;text-transform:uppercase;margin-top:3px;display:block}
-
-/* ── SECTION HEADER ── */
-.sec-hdr{text-align:center;padding:64px 24px 40px;position:relative;z-index:2}
-.sec-eye{font-family:'Cinzel',serif;font-size:9.5px;color:var(--gold);letter-spacing:.28em;text-transform:uppercase;margin-bottom:10px;display:block}
-.sec-title{font-family:'Cinzel Decorative',serif;font-size:clamp(26px,3.5vw,42px);color:var(--parch);line-height:1.1;margin-bottom:12px}
-.sec-title span{color:var(--gold2)}
-.sec-sub{font-size:16px;color:var(--parch2);font-style:italic;max-width:520px;margin:0 auto;line-height:1.6}
-.gold-div{display:flex;align-items:center;gap:10px;justify-content:center;margin-top:18px}
-.gold-div span{height:1px;width:70px;background:linear-gradient(90deg,transparent,var(--gold))}
-.gold-div span:last-child{background:linear-gradient(90deg,var(--gold),transparent)}
-.gold-div i{color:var(--gold);font-size:11px;letter-spacing:6px}
-
-/* ── MAP SECTION ── */
+/* STAT BAR */
+.sbar{position:relative;z-index:5;background:rgba(4,2,14,.92);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 24px;display:flex;justify-content:center;gap:56px}
+.si{text-align:center}.sn{font-family:'Cinzel',serif;font-size:23px;color:var(--gold2);display:block;line-height:1}.sl{font-size:9px;color:var(--parch3);letter-spacing:.12em;text-transform:uppercase;margin-top:3px;display:block}
+/* SECTION HEADER */
+.shdr{text-align:center;padding:60px 24px 36px;position:relative;z-index:2}
+.seye{font-family:'Cinzel',serif;font-size:9px;color:var(--gold);letter-spacing:.26em;text-transform:uppercase;margin-bottom:10px;display:block}
+.stit{font-family:'Cinzel Decorative',serif;font-size:clamp(24px,3.5vw,40px);color:var(--parch);line-height:1.1;margin-bottom:12px}
+.stit span{color:var(--gold2)}
+.ssub{font-size:15px;color:var(--parch2);font-style:italic;max-width:500px;margin:0 auto;line-height:1.6}
+.gdiv{display:flex;align-items:center;gap:10px;justify-content:center;margin-top:16px}
+.gdiv span{height:1px;width:68px;background:linear-gradient(90deg,transparent,var(--gold))}
+.gdiv span:last-child{background:linear-gradient(90deg,var(--gold),transparent)}
+.gdiv i{color:var(--gold);font-size:11px;letter-spacing:6px}
+/* MAP */
 #map-section{position:relative;z-index:2}
-.map-wrap{max-width:1400px;margin:0 auto;padding:0 20px 24px}
-.map-layout{display:grid;grid-template-columns:272px 1fr 248px;border:1px solid var(--border);border-radius:5px;overflow:hidden;background:rgba(4,2,12,.85);box-shadow:0 20px 80px rgba(0,0,0,.6),0 0 80px rgba(218,165,32,.04)}
-
+.mwrap{max-width:1400px;margin:0 auto;padding:0 20px 24px}
+.mlayout{display:grid;grid-template-columns:268px 1fr 244px;border:1px solid var(--border);border-radius:5px;overflow:hidden;background:rgba(4,2,12,.85);box-shadow:0 20px 80px rgba(0,0,0,.6)}
 /* LEFT */
-.map-left{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(180deg,rgba(3,2,12,.98) 0%,rgba(6,4,16,.97) 100%)}
-.ml-hero{padding:18px 16px 14px;border-bottom:1px solid var(--border);position:relative;flex-shrink:0}
-.ml-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.4}
-.ml-title{font-family:'Cinzel Decorative',serif;font-size:20px;line-height:1;background:linear-gradient(135deg,#f0c84a,#daa520,#b8860b);background-size:200%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shimmer 5s ease-in-out infinite;margin-bottom:7px}
-.ml-desc{font-size:12px;color:var(--parch2);line-height:1.55;font-style:italic}
-.ml-btn{margin-top:10px;display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid var(--gold);border-radius:3px;color:var(--gold2);font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.12em;background:rgba(184,134,11,.1);transition:all .2s}
-.ml-btn:hover{background:rgba(184,134,11,.24);box-shadow:0 0 14px rgba(218,165,32,.14);transform:translateY(-1px)}
-.ml-btn svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:1.5}
-
-.wbhdr{padding:8px 12px 6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;font-family:'Cinzel',serif;font-size:8px;color:var(--parch3);letter-spacing:.13em;text-transform:uppercase;flex-shrink:0}
-.wbhdr svg{width:10px;height:10px;stroke:var(--gold);fill:none;stroke-width:1.5}
-.frow{padding:5px 10px;border-bottom:1px solid var(--border);display:flex;gap:3px;flex-wrap:wrap;flex-shrink:0}
-.fb{padding:2px 6px;border:1px solid rgba(218,165,32,.16);border-radius:2px;color:var(--parch3);font-family:'Cinzel',serif;font-size:7.5px;letter-spacing:.05em;transition:all .13s}
-.fb:hover,.fb.on{background:rgba(218,165,32,.12);border-color:var(--gold);color:var(--gold2)}
-.cam-list{overflow-y:auto;flex:1;scrollbar-width:thin;scrollbar-color:var(--gold) rgba(5,3,14,.5)}
-.ci{display:flex;align-items:center;gap:7px;padding:8px 11px;border-bottom:1px solid rgba(218,165,32,.07);cursor:pointer;transition:background .12s;position:relative}
-.ci::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:var(--gold2);opacity:.35;transition:width .13s}
-.ci:hover{background:rgba(218,165,32,.05)}.ci:hover::before{width:2px}
-.ci.on{background:rgba(176,32,32,.18);border-left:2px solid var(--red)}.ci.on::before{display:none}
-.ci-thumb{width:46px;height:32px;object-fit:cover;border-radius:2px;border:1px solid rgba(218,165,32,.18);background:#0a0a20;flex-shrink:0;transition:border-color .13s}
-.ci:hover .ci-thumb{border-color:rgba(218,165,32,.5)}
-.ci-name{font-family:'Cinzel',serif;font-size:10px;color:var(--parch);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ci-loc{font-size:9.5px;color:var(--parch3);font-style:italic}
-.ci-fav{color:var(--parch3);font-size:11px;padding:2px;flex-shrink:0;transition:all .13s}
-.ci-fav:hover,.ci-fav.on{color:var(--gold2)}
-.view-all{padding:7px 12px;border-top:1px solid var(--border);font-family:'Cinzel',serif;font-size:8px;color:var(--gold);letter-spacing:.1em;text-align:center;cursor:pointer;transition:color .14s;display:flex;align-items:center;justify-content:center;gap:4px;flex-shrink:0}
-.view-all:hover{color:var(--gold2)}
-.view-all svg{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:2.5}
-
+.mleft{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(180deg,rgba(3,2,12,.98),rgba(6,4,16,.97))}
+.mlh{padding:16px 15px 13px;border-bottom:1px solid var(--border);flex-shrink:0;position:relative}
+.mlh::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.35}
+.mlt{font-family:'Cinzel Decorative',serif;font-size:19px;line-height:1;background:linear-gradient(135deg,#f0c84a,#daa520,#b8860b);background-size:200%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 5s ease-in-out infinite;margin-bottom:6px}
+.mld{font-size:11.5px;color:var(--parch2);line-height:1.55;font-style:italic}
+.mlbtn{margin-top:9px;display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid var(--gold);border-radius:3px;color:var(--gold2);font-family:'Cinzel',serif;font-size:8px;letter-spacing:.11em;background:rgba(184,134,11,.1);transition:all .2s}
+.mlbtn:hover{background:rgba(184,134,11,.22);transform:translateY(-1px)}
+.mlbtn svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:1.5}
+.wbh{padding:7px 11px 6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:5px;font-family:'Cinzel',serif;font-size:7.5px;color:var(--parch3);letter-spacing:.12em;text-transform:uppercase;flex-shrink:0}
+.wbh svg{width:10px;height:10px;stroke:var(--gold);fill:none;stroke-width:1.5}
+.frow{padding:5px 9px;border-bottom:1px solid var(--border);display:flex;gap:3px;flex-wrap:wrap;flex-shrink:0}
+.fb{padding:2px 6px;border:1px solid rgba(218,165,32,.15);border-radius:2px;color:var(--parch3);font-family:'Cinzel',serif;font-size:7px;transition:all .13s}
+.fb:hover,.fb.on{background:rgba(218,165,32,.11);border-color:var(--gold);color:var(--gold2)}
+.clist{overflow-y:auto;flex:1;scrollbar-width:thin;scrollbar-color:var(--gold) rgba(5,3,14,.5)}
+.ci{display:flex;align-items:center;gap:7px;padding:7px 10px;border-bottom:1px solid rgba(218,165,32,.07);cursor:pointer;transition:background .12s}
+.ci:hover{background:rgba(218,165,32,.05)}.ci.on{background:rgba(176,32,32,.18);border-left:2px solid var(--red)}
+.cth{width:44px;height:30px;object-fit:cover;border-radius:2px;border:1px solid rgba(218,165,32,.18);background:#0a0a20;flex-shrink:0}
+.cn{font-family:'Cinzel',serif;font-size:9.5px;color:var(--parch);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cl{font-size:9px;color:var(--parch3);font-style:italic}
+.cfav{color:var(--parch3);font-size:11px;padding:2px;flex-shrink:0;transition:all .13s}
+.cfav:hover,.cfav.on{color:var(--gold2)}
+.wall{padding:6px 11px;border-top:1px solid var(--border);font-family:'Cinzel',serif;font-size:7.5px;color:var(--gold);letter-spacing:.1em;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;flex-shrink:0}
+.wall:hover{color:var(--gold2)}.wall svg{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:2.5}
 /* MAP CENTER */
-.map-center{display:flex;flex-direction:column;overflow:hidden}
-.map-top{flex:1;position:relative;overflow:hidden;min-height:420px;background:radial-gradient(ellipse at 50% 55%,#0f2240 0%,#071428 45%,#030812 100%)}
-#map-aurora{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
-#map-svg-wrap{position:absolute;inset:0;z-index:1}
-#map-svg-wrap svg{width:100%;height:100%}
-.map-tip{position:absolute;display:none;z-index:30;background:rgba(3,2,12,.97);border:1px solid var(--gold);border-radius:3px;padding:6px 10px;font-size:11.5px;color:var(--parch);pointer-events:none;line-height:1.4;max-width:175px;box-shadow:0 4px 20px rgba(0,0,0,.8)}
-#map-loading{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:var(--parch2);font-family:'Cinzel',serif;font-size:11px;letter-spacing:.1em}
-#map-loading svg{width:32px;height:32px;stroke:var(--gold);fill:none;stroke-width:1.5;animation:spin 1.5s linear infinite}
+.mcent{display:flex;flex-direction:column;overflow:hidden}
+.mtop{flex:1;position:relative;overflow:hidden;min-height:420px;background:radial-gradient(ellipse at 50% 55%,#0f2240 0%,#071428 45%,#030812 100%)}
+#map-ac{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+#map-wrap{position:absolute;inset:0;z-index:1}
+#map-wrap svg{width:100%;height:100%}
+.mtip{position:absolute;display:none;z-index:30;background:rgba(3,2,12,.97);border:1px solid var(--gold);border-radius:3px;padding:6px 10px;font-size:11px;color:var(--parch);pointer-events:none;line-height:1.4;max-width:160px;box-shadow:0 4px 20px rgba(0,0,0,.8)}
+#mload{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--parch2);font-family:'Cinzel',serif;font-size:10px;letter-spacing:.1em}
+#mload svg{width:30px;height:30px;stroke:var(--gold);fill:none;stroke-width:1.5;animation:spin 1.5s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pulse-pin{0%{r:8;opacity:.6}100%{r:20;opacity:0}}
-.pin-pulse{animation:pulse-pin 2.5s ease-out infinite}
-
+@keyframes pp{0%{r:8;opacity:.6}100%{r:20;opacity:0}}
+.pp{animation:pp 2.5s ease-out infinite}
 /* LIVE PANEL */
-.live-panel{border-top:1px solid var(--border);height:188px;display:flex;overflow:hidden;background:linear-gradient(90deg,rgba(3,2,12,.98),rgba(6,4,16,.97));flex-shrink:0}
-.lp-pic{width:285px;flex-shrink:0;position:relative;overflow:hidden;background:#000}
-.lp-pic::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,transparent 70%,rgba(3,2,12,.85) 100%);pointer-events:none}
-#live-img{width:100%;height:100%;object-fit:cover;transition:opacity .35s}
-.lp-badge{position:absolute;top:8px;left:8px;z-index:5;display:flex;align-items:center;gap:4px;background:rgba(3,2,12,.85);border:1px solid rgba(218,165,32,.28);border-radius:2px;padding:2px 7px;font-family:'Cinzel',serif;font-size:8.5px;color:var(--parch2);letter-spacing:.1em}
-.ldot{width:5px;height:5px;border-radius:50%;background:#e05a2b;animation:blink 1.4s ease-in-out infinite;box-shadow:0 0 4px rgba(224,90,43,.6)}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.1}}
-.lp-subs{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:0 5px;border-right:1px solid var(--border);flex-shrink:0}
-.lp-sub{width:60px;height:40px;object-fit:cover;border-radius:2px;border:1.5px solid rgba(218,165,32,.18);opacity:.5;cursor:pointer;transition:all .14s}
-.lp-sub:hover,.lp-sub.on{opacity:1;border-color:var(--gold2)}
-.lp-info{flex:1;padding:12px 15px;min-width:0}
-#lp-name{font-family:'Cinzel',serif;font-size:14.5px;color:var(--gold2);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#lp-region{font-size:10px;color:var(--parch3);text-transform:uppercase;letter-spacing:.13em;margin-top:2px}
-.lp-wx{display:flex;align-items:center;gap:9px;margin-top:8px}
-#lp-temp{font-family:'Cinzel',serif;font-size:21px;color:var(--parch)}
-.lp-wxi{display:flex;align-items:center;gap:3px;color:var(--parch3);font-size:11.5px}
-.lp-wxi svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:1.5}
-.lp-btns{display:flex;gap:5px;margin-top:10px}
-.lp-btn{display:flex;align-items:center;gap:4px;padding:5px 12px;border:1px solid var(--gold);border-radius:2px;color:var(--gold2);font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.09em;background:rgba(184,134,11,.1);transition:all .18s}
-.lp-btn:hover{background:rgba(184,134,11,.26);box-shadow:0 0 10px rgba(218,165,32,.13)}
-.lp-btn.sec{border-color:var(--border);background:transparent;color:var(--parch3)}
-.lp-btn.sec:hover{color:var(--gold2);border-color:var(--gold)}
-.lp-btn svg{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:1.8}
-
+.lpan{border-top:1px solid var(--border);height:186px;display:flex;overflow:hidden;background:linear-gradient(90deg,rgba(3,2,12,.98),rgba(6,4,16,.97));flex-shrink:0}
+.lpp{width:280px;flex-shrink:0;position:relative;overflow:hidden;background:#000}
+.lpp::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,transparent 70%,rgba(3,2,12,.85) 100%);pointer-events:none}
+#limg{width:100%;height:100%;object-fit:cover;transition:opacity .35s}
+.lbad{position:absolute;top:7px;left:7px;z-index:5;display:flex;align-items:center;gap:4px;background:rgba(3,2,12,.85);border:1px solid rgba(218,165,32,.25);border-radius:2px;padding:2px 7px;font-family:'Cinzel',serif;font-size:8px;color:var(--parch2);letter-spacing:.1em}
+.ldot{width:5px;height:5px;border-radius:50%;background:#e05a2b;animation:bl 1.4s ease-in-out infinite}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.1}}
+.lsubs{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:0 5px;border-right:1px solid var(--border);flex-shrink:0}
+.lsub{width:58px;height:38px;object-fit:cover;border-radius:2px;border:1.5px solid rgba(218,165,32,.18);opacity:.5;cursor:pointer;transition:all .14s}
+.lsub:hover,.lsub.on{opacity:1;border-color:var(--gold2)}
+.linf{flex:1;padding:11px 14px;min-width:0}
+#lnam{font-family:'Cinzel',serif;font-size:14px;color:var(--gold2);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#lreg{font-size:9.5px;color:var(--parch3);text-transform:uppercase;letter-spacing:.12em;margin-top:2px}
+.lwx{display:flex;align-items:center;gap:8px;margin-top:7px}
+#ltemp{font-family:'Cinzel',serif;font-size:20px;color:var(--parch)}
+.lwxi{display:flex;align-items:center;gap:3px;color:var(--parch3);font-size:11px}
+.lwxi svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:1.5}
+.lbtns{display:flex;gap:5px;margin-top:9px}
+.lbtn{display:flex;align-items:center;gap:4px;padding:5px 11px;border:1px solid var(--gold);border-radius:2px;color:var(--gold2);font-family:'Cinzel',serif;font-size:8px;letter-spacing:.09em;background:rgba(184,134,11,.1);transition:all .17s}
+.lbtn:hover{background:rgba(184,134,11,.24)}.lbtn.sec{border-color:var(--border);background:transparent;color:var(--parch3)}.lbtn.sec:hover{color:var(--gold2);border-color:var(--gold)}
+.lbtn svg{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:1.8}
 /* RIGHT */
-.map-right{border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(180deg,rgba(3,2,12,.98) 0%,rgba(6,4,16,.97) 100%)}
-.reg-block{padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
-.reg-block h4{font-family:'Cinzel',serif;font-size:8px;color:var(--parch3);letter-spacing:.13em;text-transform:uppercase;margin-bottom:8px}
-.ri{display:flex;align-items:center;gap:6px;padding:4.5px 0;cursor:pointer;color:var(--parch3);font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.05em;border-bottom:1px solid rgba(218,165,32,.05);transition:color .13s}
-.ri:hover,.ri.on{color:var(--gold2)}
-.ri.all{color:var(--gold2);font-size:9.5px}
-.ri-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.wx-block{flex:1;padding:11px 12px;overflow-y:auto}
-.wx-block h4{font-family:'Cinzel',serif;font-size:8px;color:var(--parch3);letter-spacing:.13em;text-transform:uppercase;margin-bottom:9px;display:flex;align-items:center;gap:5px}
-.wx-block h4 svg{width:11px;height:11px;stroke:var(--gold);fill:none;stroke-width:1.5}
-.wx-big{display:flex;align-items:center;gap:8px;margin-bottom:9px}
-.wx-temp{font-family:'Cinzel',serif;font-size:27px;color:var(--parch)}
-.wx-icon{font-size:22px}
-.wx-desc{font-size:11px;color:var(--parch2);font-style:italic}
-.wx-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-.wx-cell{background:rgba(10,22,45,.5);border:1px solid rgba(28,60,110,.3);border-radius:3px;padding:5px 7px}
-.wx-lbl{font-size:7.5px;color:var(--parch3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px}
-.wx-val{font-family:'Cinzel',serif;font-size:12px;color:var(--parch)}
-#wx-stn{font-size:8.5px;color:var(--parch3);font-style:italic;margin-top:7px;opacity:.6;line-height:1.4}
-.fc-btn{width:100%;background:transparent;border:1px solid var(--border);border-radius:2px;color:var(--parch3);font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.1em;padding:6px;margin-top:9px;display:flex;align-items:center;justify-content:center;gap:4px;transition:all .15s}
-.fc-btn:hover{border-color:var(--gold);color:var(--gold2)}
-.fc-btn svg{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:2.5}
-
-/* ── WEBCAM GRID ── */
-#webcams-section{position:relative;z-index:2;padding:0 20px 72px;max-width:1400px;margin:0 auto}
-.wc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
-.wc-card{border:1px solid var(--border);border-radius:4px;overflow:hidden;background:rgba(5,3,14,.85);cursor:pointer;transition:all .22s;position:relative}
-.wc-card:hover{border-color:rgba(218,165,32,.5);transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 18px rgba(218,165,32,.05)}
-.wc-img-wrap{height:165px;overflow:hidden;position:relative;background:#050310}
-.wc-img-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 55%,rgba(3,2,12,.8) 100%)}
-.wc-img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
-.wc-card:hover .wc-img{transform:scale(1.04)}
-.wc-badge{position:absolute;top:8px;left:8px;z-index:2;display:flex;align-items:center;gap:3px;background:rgba(3,2,12,.85);border:1px solid rgba(218,165,32,.22);border-radius:2px;padding:2px 6px;font-family:'Cinzel',serif;font-size:7.5px;color:var(--parch2);letter-spacing:.09em}
-.wc-dot{width:4px;height:4px;border-radius:50%;background:#e05a2b;animation:blink 1.4s ease-in-out infinite}
-.wc-tag{position:absolute;top:8px;right:8px;z-index:2;padding:2px 6px;border-radius:2px;font-family:'Cinzel',serif;font-size:7px;letter-spacing:.07em;text-transform:uppercase}
-.tag-n{background:rgba(100,160,50,.22);color:#90d060;border:1px solid rgba(100,160,50,.38)}
-.tag-e{background:rgba(200,60,30,.22);color:#e08060;border:1px solid rgba(200,60,30,.38)}
-.tag-j{background:rgba(80,160,220,.18);color:#80c8f0;border:1px solid rgba(80,160,220,.32)}
-.tag-b{background:rgba(218,165,32,.16);color:#daa520;border:1px solid rgba(218,165,32,.32)}
-.tag-r{background:rgba(155,135,75,.18);color:#c8b870;border:1px solid rgba(155,135,75,.32)}
-.tag-h{background:rgba(40,128,200,.18);color:#60b8e0;border:1px solid rgba(40,128,200,.32)}
-.wc-body{padding:11px 13px}
-.wc-name{font-family:'Cinzel',serif;font-size:11.5px;color:var(--parch);margin-bottom:2px}
-.wc-region{font-size:10.5px;color:var(--parch3);font-style:italic}
-
-/* ── ABOUT ── */
-#about-section{position:relative;z-index:2;padding:0 20px 72px}
-.about-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;max-width:1100px;margin:0 auto}
-.about-card{background:rgba(5,3,14,.85);border:1px solid var(--border);border-radius:4px;padding:26px 22px;transition:all .2s;position:relative;overflow:hidden}
-.about-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.35}
-.about-card:hover{border-color:rgba(218,165,32,.38);transform:translateY(-2px)}
-.about-rune{font-size:30px;margin-bottom:13px;display:block;filter:drop-shadow(0 0 8px rgba(218,165,32,.3))}
-.about-title{font-family:'Cinzel',serif;font-size:13px;color:var(--gold2);letter-spacing:.09em;margin-bottom:9px}
-.about-text{font-size:13.5px;color:var(--parch2);line-height:1.65}
-
-/* ── FOOTER ── */
+.mright{border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(180deg,rgba(3,2,12,.98),rgba(6,4,16,.97))}
+.regb{padding:9px 11px;border-bottom:1px solid var(--border);flex-shrink:0}
+.regb h4{font-family:'Cinzel',serif;font-size:7.5px;color:var(--parch3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:7px}
+.ri{display:flex;align-items:center;gap:6px;padding:4px 0;cursor:pointer;color:var(--parch3);font-family:'Cinzel',serif;font-size:8px;border-bottom:1px solid rgba(218,165,32,.05);transition:color .13s}
+.ri:hover,.ri.on{color:var(--gold2)}.ri.all{color:var(--gold2);font-size:9px}
+.ridot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.wxb{flex:1;padding:10px 11px;overflow-y:auto}
+.wxb h4{font-family:'Cinzel',serif;font-size:7.5px;color:var(--parch3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.wxb h4 svg{width:10px;height:10px;stroke:var(--gold);fill:none;stroke-width:1.5}
+.wxbig{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.wxt{font-family:'Cinzel',serif;font-size:25px;color:var(--parch)}.wxi{font-size:20px}.wxd{font-size:10.5px;color:var(--parch2);font-style:italic}
+.wxg{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.wxc{background:rgba(10,20,44,.5);border:1px solid rgba(26,58,108,.3);border-radius:3px;padding:4px 6px}
+.wxl{font-size:7px;color:var(--parch3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px}
+.wxv{font-family:'Cinzel',serif;font-size:11.5px;color:var(--parch)}
+#wxstn{font-size:8px;color:var(--parch3);font-style:italic;margin-top:6px;opacity:.6;line-height:1.4}
+.fcb{width:100%;background:transparent;border:1px solid var(--border);border-radius:2px;color:var(--parch3);font-family:'Cinzel',serif;font-size:8px;letter-spacing:.1em;padding:5px;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:4px;transition:all .15s}
+.fcb:hover{border-color:var(--gold);color:var(--gold2)}.fcb svg{width:8px;height:8px;stroke:currentColor;fill:none;stroke-width:2.5}
+/* WEBCAM GRID */
+#wc-sec{position:relative;z-index:2;padding:0 20px 68px;max-width:1400px;margin:0 auto}
+.wcg{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:13px}
+.wcc{border:1px solid var(--border);border-radius:4px;overflow:hidden;background:rgba(5,3,14,.85);cursor:pointer;transition:all .22s}
+.wcc:hover{border-color:rgba(218,165,32,.48);transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,.5)}
+.wcw{height:162px;overflow:hidden;position:relative;background:#050310}
+.wcw::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 55%,rgba(3,2,12,.78) 100%)}
+.wci{width:100%;height:100%;object-fit:cover;transition:transform .4s}.wcc:hover .wci{transform:scale(1.04)}
+.wcbad{position:absolute;top:7px;left:7px;z-index:2;display:flex;align-items:center;gap:3px;background:rgba(3,2,12,.85);border:1px solid rgba(218,165,32,.2);border-radius:2px;padding:2px 6px;font-family:'Cinzel',serif;font-size:7px;color:var(--parch2);letter-spacing:.09em}
+.wcdot{width:4px;height:4px;border-radius:50%;background:#e05a2b;animation:bl 1.4s ease-in-out infinite}
+.wctag{position:absolute;top:7px;right:7px;z-index:2;padding:2px 6px;border-radius:2px;font-family:'Cinzel',serif;font-size:6.5px;letter-spacing:.07em;text-transform:uppercase}
+.tn{background:rgba(100,160,50,.2);color:#90d060;border:1px solid rgba(100,160,50,.35)}
+.te{background:rgba(200,60,30,.2);color:#e08060;border:1px solid rgba(200,60,30,.35)}
+.tj{background:rgba(80,160,220,.16);color:#80c8f0;border:1px solid rgba(80,160,220,.3)}
+.tb{background:rgba(218,165,32,.14);color:#daa520;border:1px solid rgba(218,165,32,.3)}
+.tr{background:rgba(155,135,75,.16);color:#c8b870;border:1px solid rgba(155,135,75,.3)}
+.th2{background:rgba(40,128,200,.16);color:#60b8e0;border:1px solid rgba(40,128,200,.3)}
+.wcb{padding:10px 12px}.wcn{font-family:'Cinzel',serif;font-size:11px;color:var(--parch);margin-bottom:2px}.wcreg{font-size:10px;color:var(--parch3);font-style:italic}
+/* ABOUT */
+#abt-sec{position:relative;z-index:2;padding:0 20px 68px}
+.ag{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;max-width:1080px;margin:0 auto}
+.ac{background:rgba(5,3,14,.85);border:1px solid var(--border);border-radius:4px;padding:24px 20px;transition:all .2s;position:relative}
+.ac::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.33}
+.ac:hover{border-color:rgba(218,165,32,.36);transform:translateY(-2px)}
+.ar{font-size:28px;margin-bottom:12px;display:block}.at{font-family:'Cinzel',serif;font-size:12.5px;color:var(--gold2);margin-bottom:8px}.ad{font-size:13px;color:var(--parch2);line-height:1.65}
+/* FOOTER */
 footer{position:relative;z-index:2;background:linear-gradient(180deg,rgba(3,2,12,.98),#020109);border-top:1px solid var(--gold);box-shadow:0 -2px 30px rgba(218,165,32,.06)}
-.footer-top{display:flex;justify-content:space-between;gap:32px;max-width:1200px;margin:0 auto;padding:40px 20px 28px;border-bottom:1px solid var(--border)}
-.footer-brand p{font-size:12.5px;color:var(--parch2);font-style:italic;max-width:220px;line-height:1.55;margin-top:8px}
-.footer-col h5{font-family:'Cinzel',serif;font-size:8.5px;color:var(--parch3);letter-spacing:.2em;text-transform:uppercase;margin-bottom:12px}
-.footer-col a{display:block;font-size:12.5px;color:var(--parch2);margin-bottom:7px;transition:color .14s}
-.footer-col a:hover{color:var(--gold2)}
-.footer-btm{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;max-width:1200px;margin:0 auto;font-family:'Cinzel',serif;font-size:8px;color:var(--parch3);letter-spacing:.17em}
-.ship{font-size:18px;animation:ship-rock 6s ease-in-out infinite}
-@keyframes ship-rock{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-3px) rotate(2deg)}}
-
-/* ── LIGHTBOX ── */
-#lightbox{display:none;position:fixed;inset:0;z-index:1000;background:rgba(2,1,10,.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);flex-direction:column;align-items:center;justify-content:center}
-#lightbox.open{display:flex}
-#lb-hdr{position:absolute;top:0;left:0;right:0;padding:14px 18px;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,rgba(2,1,10,.92) 0%,transparent 100%);z-index:2}
-#lb-name{font-family:'Cinzel',serif;font-size:15px;color:var(--gold2);letter-spacing:.07em;text-transform:uppercase;flex:1}
-#lb-region{font-size:10px;color:var(--parch3);font-style:italic}
-.lb-close{display:flex;align-items:center;gap:5px;padding:5px 13px;border:1px solid var(--gold);border-radius:2px;color:var(--gold2);font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;background:rgba(184,134,11,.12);transition:all .17s}
-.lb-close:hover{background:rgba(184,134,11,.28)}
-.lb-close svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
-#lb-content{display:flex;flex-direction:column;align-items:center;gap:12px;max-width:92vw}
-#lb-img{max-width:90vw;max-height:70vh;object-fit:contain;border:1px solid rgba(218,165,32,.18);border-radius:3px;transition:opacity .35s}
-#lb-no{display:none;text-align:center;padding:40px 20px}
-#lb-no h3{font-family:'Cinzel',serif;font-size:18px;color:var(--gold2);margin-bottom:10px}
-#lb-no p{color:var(--parch2);font-size:14px;margin-bottom:18px}
-.lb-open{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border:1px solid var(--gold);border-radius:2px;color:var(--gold2);font-family:'Cinzel',serif;font-size:9.5px;letter-spacing:.12em;background:rgba(184,134,11,.12);transition:all .2s}
-.lb-open:hover{background:rgba(184,134,11,.28)}
-.lb-open svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.8}
-#lb-subs{display:flex;gap:7px}
-.lb-sub{width:88px;height:58px;object-fit:cover;border-radius:2px;border:1.5px solid rgba(218,165,32,.2);opacity:.55;cursor:pointer;transition:all .14s}
-.lb-sub:hover,.lb-sub.on{opacity:1;border-color:var(--gold2)}
-#lb-refresh{position:absolute;bottom:10px;right:12px;font-family:'Cinzel',serif;font-size:8.5px;color:var(--parch3);background:rgba(2,1,10,.75);padding:3px 8px;border-radius:2px;letter-spacing:.07em}
-#lb-wx{display:flex;gap:18px;color:var(--parch2);font-size:13.5px;margin-top:2px}
-#lb-wx span{display:flex;align-items:center;gap:5px}
-
-/* ── MOBILE MENU ── */
-#mob-menu{display:none;position:fixed;inset:0;z-index:200;background:rgba(3,2,14,.98);padding:76px 28px 28px;flex-direction:column;gap:0}
-.mob-link{font-family:'Cinzel',serif;font-size:20px;color:var(--parch);padding:14px 0;border-bottom:1px solid rgba(218,165,32,.12);letter-spacing:.1em}
-.mob-link.gold{color:var(--gold2)}
-.mob-langs{display:flex;gap:10px;margin-top:28px;flex-wrap:wrap}
-#mob-close{position:absolute;top:18px;right:18px;background:none;border:none;cursor:pointer}
-#mob-close svg{width:22px;height:22px;stroke:var(--gold);fill:none;stroke-width:2}
-#mob-btn{display:none}
-
-/* ── RESPONSIVE ── */
-@media(max-width:1100px){.map-layout{grid-template-columns:240px 1fr 220px}}
-@media(max-width:1024px){
-  .map-layout{grid-template-columns:238px 1fr}
-  .map-right{display:none}
-  .about-grid{grid-template-columns:1fr 1fr}
-}
+.ftop{display:flex;justify-content:space-between;gap:28px;max-width:1200px;margin:0 auto;padding:36px 20px 24px;border-bottom:1px solid var(--border)}
+.fb2 p{font-size:12px;color:var(--parch2);font-style:italic;max-width:210px;line-height:1.55;margin-top:7px}
+.fc h5{font-family:'Cinzel',serif;font-size:8px;color:var(--parch3);letter-spacing:.18em;text-transform:uppercase;margin-bottom:10px}
+.fc a{display:block;font-size:12px;color:var(--parch2);margin-bottom:6px;transition:color .14s}.fc a:hover{color:var(--gold2)}
+.fbtm{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;max-width:1200px;margin:0 auto;font-family:'Cinzel',serif;font-size:7.5px;color:var(--parch3);letter-spacing:.16em}
+.ship{font-size:17px;animation:sr 6s ease-in-out infinite}
+@keyframes sr{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-3px) rotate(2deg)}}
+/* LIGHTBOX */
+#lb{display:none;position:fixed;inset:0;z-index:1000;background:rgba(2,1,10,.96);backdrop-filter:blur(14px);flex-direction:column;align-items:center;justify-content:center}
+#lb.open{display:flex}
+#lbh{position:absolute;top:0;left:0;right:0;padding:13px 17px;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,rgba(2,1,10,.92),transparent);z-index:2}
+#lbnam{font-family:'Cinzel',serif;font-size:14px;color:var(--gold2);letter-spacing:.07em;text-transform:uppercase;flex:1}
+#lbreg{font-size:9.5px;color:var(--parch3);font-style:italic}
+.lbcl{display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--gold);border-radius:2px;color:var(--gold2);font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.1em;background:rgba(184,134,11,.12);transition:all .17s}
+.lbcl:hover{background:rgba(184,134,11,.26)}.lbcl svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2}
+#lbcont{display:flex;flex-direction:column;align-items:center;gap:11px;max-width:92vw}
+#lbimg{max-width:90vw;max-height:70vh;object-fit:contain;border:1px solid rgba(218,165,32,.16);border-radius:3px;transition:opacity .33s}
+#lbno{display:none;text-align:center;padding:36px 18px}
+#lbno h3{font-family:'Cinzel',serif;font-size:17px;color:var(--gold2);margin-bottom:9px}
+#lbno p{color:var(--parch2);font-size:13.5px;margin-bottom:17px}
+.lbopen{display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border:1px solid var(--gold);border-radius:2px;color:var(--gold2);font-family:'Cinzel',serif;font-size:9px;letter-spacing:.11em;background:rgba(184,134,11,.12);transition:all .2s}
+.lbopen:hover{background:rgba(184,134,11,.26)}.lbopen svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:1.8}
+#lbsubs{display:flex;gap:6px}
+.lbsub{width:84px;height:55px;object-fit:cover;border-radius:2px;border:1.5px solid rgba(218,165,32,.18);opacity:.55;cursor:pointer;transition:all .14s}
+.lbsub:hover,.lbsub.on{opacity:1;border-color:var(--gold2)}
+#lbref{position:absolute;bottom:9px;right:11px;font-family:'Cinzel',serif;font-size:8px;color:var(--parch3);background:rgba(2,1,10,.75);padding:2px 7px;border-radius:2px}
+#lbwx{display:flex;gap:16px;color:var(--parch2);font-size:13px;margin-top:2px}
+#lbwx span{display:flex;align-items:center;gap:4px}
+/* MOBILE MENU */
+#mob{display:none;position:fixed;inset:0;z-index:200;background:rgba(3,2,14,.98);padding:72px 26px 26px;flex-direction:column}
+.mlink{font-family:'Cinzel',serif;font-size:19px;color:var(--parch);padding:13px 0;border-bottom:1px solid rgba(218,165,32,.11);letter-spacing:.1em}
+.mlink.g{color:var(--gold2)}
+.mlangs{display:flex;gap:8px;margin-top:24px;flex-wrap:wrap}
+#mcl{position:absolute;top:17px;right:17px;background:none;border:none;cursor:pointer}
+#mcl svg{width:21px;height:21px;stroke:var(--gold);fill:none;stroke-width:2}
+#mbt{display:none;padding:7px;color:var(--gold2)}
+#mbt svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8}
+/* RESPONSIVE */
+@media(max-width:1100px){.mlayout{grid-template-columns:238px 1fr 216px}}
+@media(max-width:1024px){.mlayout{grid-template-columns:234px 1fr}.mright{display:none}.ag{grid-template-columns:1fr 1fr}}
 @media(max-width:768px){
-  .nav-links{display:none}
-  .langs{display:none}
-  #mob-btn{display:block;padding:8px;color:var(--gold2)}
-  #mob-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8}
-  #hero{min-height:100svh}
-  .hero-h{font-size:clamp(34px,10vw,58px)}
-  .stat-bar{gap:20px;flex-wrap:wrap;justify-content:center;padding:12px}
-  .stat-n{font-size:20px}
-  .map-layout{grid-template-columns:1fr}
-  .map-left{border-right:none;border-bottom:1px solid var(--border);max-height:300px}
-  .map-right{display:none}
-  .map-top{min-height:260px}
-  .live-panel{flex-direction:column;height:auto}
-  .lp-pic{width:100%;height:190px}
-  .lp-subs{flex-direction:row;border-right:none;border-bottom:1px solid var(--border);padding:5px 8px;overflow-x:auto}
-  .map-wrap{padding:0 0 16px}
-  #webcams-section{padding:0 12px 48px}
-  .wc-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:9px}
-  .wc-img-wrap{height:120px}
-  .about-grid{grid-template-columns:1fr;gap:10px}
-  #about-section{padding:0 12px 48px}
-  .footer-top{flex-direction:column;gap:20px}
-  .footer-col{display:none}
-  #lb-img{max-height:55vh}
+  .nls{display:none}.nav-r .langs{display:none}#mbt{display:block}
+  #hero{min-height:100svh}.hh{font-size:clamp(32px,10vw,56px)}
+  .sbar{gap:18px;flex-wrap:wrap;justify-content:center;padding:11px}
+  .mlayout{grid-template-columns:1fr}.mleft{border-right:none;border-bottom:1px solid var(--border);max-height:290px}.mright{display:none}.mtop{min-height:255px}
+  .lpan{flex-direction:column;height:auto}.lpp{width:100%;height:185px}.lsubs{flex-direction:row;border-right:none;border-bottom:1px solid var(--border);padding:4px 7px;overflow-x:auto}
+  .mwrap{padding:0 0 14px}#wc-sec{padding:0 11px 44px}
+  .wcg{grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:8px}.wcw{height:115px}
+  .ag{grid-template-columns:1fr;gap:9px}#abt-sec{padding:0 11px 44px}
+  .ftop{flex-direction:column;gap:18px}.fc{display:none}
 }
-@media(max-width:400px){
-  .hero-h{font-size:32px}
-  .stat-bar{grid-template-columns:1fr 1fr;display:grid;gap:8px}
-  .wc-grid{grid-template-columns:1fr 1fr}
-}
-@media(hover:none){
-  .ci{padding:10px 11px}
-  .lp-btn{padding:9px 16px}
-  .fb{padding:4px 8px}
-}
+@media(max-width:400px){.hh{font-size:30px}.sbar{display:grid;grid-template-columns:1fr 1fr;gap:7px}.wcg{grid-template-columns:1fr 1fr}}
+@media(hover:none){.ci{padding:9px 10px}.lbtn{padding:8px 15px}.fb{padding:3px 7px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
-
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:rgba(5,3,14,.5)}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
 </style>
 </head>
 <body>
-
-<!-- Stars -->
 <canvas id="stars"></canvas>
-
-<!-- Mobile menu -->
-<div id="mob-menu">
-  <button id="mob-close" onclick="closeMobMenu()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-  <a class="mob-link gold" href="#map-section" onclick="closeMobMenu()" id="t-nmap2">MAP</a>
-  <a class="mob-link" href="#webcams-section" onclick="closeMobMenu()" id="t-nweb2">WEBCAMS</a>
-  <a class="mob-link" href="#about-section" onclick="closeMobMenu()" id="t-nabt2">ABOUT</a>
-  <a class="mob-link" href="#footer" onclick="closeMobMenu()" id="t-ncon2">CONTACT</a>
-  <div class="mob-langs" id="mob-langs"></div>
+<!-- MOBILE MENU -->
+<div id="mob">
+  <button id="mcl" onclick="cMob()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  <a class="mlink g" href="#map-section" onclick="cMob()">MAP</a>
+  <a class="mlink" href="#wc-sec" onclick="cMob()">WEBCAMS</a>
+  <a class="mlink" href="#abt-sec" onclick="cMob()">ABOUT</a>
+  <a class="mlink" href="#footer" onclick="cMob()">CONTACT</a>
+  <div class="mlangs" id="mlangs"></div>
 </div>
-
-<!-- Lightbox -->
-<div id="lightbox">
-  <div id="lb-hdr">
-    <div>
-      <div id="lb-name">—</div>
-      <div id="lb-region-lb"></div>
-      <div id="lb-wx"></div>
-    </div>
-    <button class="lb-close" onclick="closeLB()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>CLOSE</button>
+<!-- LIGHTBOX -->
+<div id="lb">
+  <div id="lbh">
+    <div><div id="lbnam">—</div><div id="lbreg"></div><div id="lbwx"></div></div>
+    <button class="lbcl" onclick="cLB()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>CLOSE</button>
   </div>
-  <div id="lb-content">
-    <div style="position:relative">
-      <img id="lb-img" src="" alt=""/>
-      <div id="lb-refresh"></div>
+  <div id="lbcont">
+    <div style="position:relative"><img id="lbimg" src="" alt=""/><div id="lbref"></div></div>
+    <div id="lbno">
+      <h3 id="lbnonam">—</h3>
+      <p>This webcam streams through an external provider.</p>
+      <a id="lbext" href="#" target="_blank" class="lbopen"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/></svg>OPEN LIVE WEBCAM</a>
     </div>
-    <div id="lb-no">
-      <h3 id="lb-no-name">—</h3>
-      <p id="t-lb-no-p">This webcam streams through an external provider.</p>
-      <a id="lb-ext" href="#" target="_blank" class="lb-open"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/></svg><span id="t-lb-open">OPEN LIVE WEBCAM</span></a>
-    </div>
-    <div id="lb-subs"></div>
+    <div id="lbsubs"></div>
   </div>
 </div>
-
 <!-- NAV -->
 <nav id="nav">
-  <div class="nav-inner">
+  <div class="navi">
     <a href="#" class="logo">
-      <svg class="logo-rune" viewBox="0 0 38 38">
-        <circle cx="19" cy="19" r="17" fill="#020109" stroke="#b8860b" stroke-width="1.3"/>
-        <circle cx="19" cy="19" r="11" fill="none" stroke="rgba(218,165,32,.28)" stroke-width=".5"/>
-        <g stroke="#daa520" stroke-width=".95">
-          <line x1="19" y1="2" x2="19" y2="8"/><line x1="19" y1="8" x2="16.5" y2="10.5"/>
-          <line x1="31" y1="8" x2="27" y2="12"/><line x1="27" y1="12" x2="28" y2="15"/>
-          <line x1="36" y1="19" x2="30" y2="19"/><line x1="30" y1="19" x2="28.5" y2="21.5"/>
-          <line x1="31" y1="31" x2="27" y2="27"/><line x1="27" y1="27" x2="24" y2="28"/>
-          <line x1="19" y1="36" x2="19" y2="30"/><line x1="19" y1="30" x2="21.5" y2="27.5"/>
-          <line x1="7" y1="31" x2="11" y2="27"/><line x1="11" y1="27" x2="10" y2="24"/>
-          <line x1="2" y1="19" x2="8" y2="19"/><line x1="8" y1="19" x2="9.5" y2="16.5"/>
-          <line x1="7" y1="8" x2="11" y2="12"/><line x1="11" y1="12" x2="14" y2="11"/>
-        </g>
-        <circle cx="19" cy="19" r="3" fill="#daa520"/>
-      </svg>
-      <div><h1>SHOWME.IS</h1><p id="t-logosub">Show Me Iceland</p></div>
+      <svg class="logo-rune" viewBox="0 0 38 38"><circle cx="19" cy="19" r="17" fill="#020109" stroke="#b8860b" stroke-width="1.3"/><circle cx="19" cy="19" r="11" fill="none" stroke="rgba(218,165,32,.25)" stroke-width=".5"/><g stroke="#daa520" stroke-width=".9"><line x1="19" y1="2" x2="19" y2="8"/><line x1="19" y1="8" x2="16.5" y2="10.5"/><line x1="31" y1="8" x2="27" y2="12"/><line x1="27" y1="12" x2="28" y2="15"/><line x1="36" y1="19" x2="30" y2="19"/><line x1="30" y1="19" x2="28.5" y2="21.5"/><line x1="31" y1="31" x2="27" y2="27"/><line x1="27" y1="27" x2="24" y2="28"/><line x1="19" y1="36" x2="19" y2="30"/><line x1="19" y1="30" x2="21.5" y2="27.5"/><line x1="7" y1="31" x2="11" y2="27"/><line x1="11" y1="27" x2="10" y2="24"/><line x1="2" y1="19" x2="8" y2="19"/><line x1="8" y1="19" x2="9.5" y2="16.5"/><line x1="7" y1="8" x2="11" y2="12"/><line x1="11" y1="12" x2="14" y2="11"/></g><circle cx="19" cy="19" r="3" fill="#daa520"/></svg>
+      <div><h1>SHOWME.IS</h1><p>Show Me Iceland</p></div>
     </a>
-    <div class="nav-links">
-      <a class="nl on" href="#map-section"><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/></svg><span id="t-nmap">MAP</span></a>
-      <a class="nl" href="#webcams-section"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/></svg><span id="t-nweb">WEBCAMS</span></a>
-      <a class="nl" href="#about-section"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span id="t-nabt">ABOUT</span></a>
-      <a class="nl" href="#footer"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span id="t-ncon">CONTACT</span></a>
+    <div class="nls">
+      <a class="nl on" href="#map-section"><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/></svg>MAP</a>
+      <a class="nl" href="#wc-sec"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/></svg>WEBCAMS</a>
+      <a class="nl" href="#abt-sec"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>ABOUT</a>
+      <a class="nl" href="#footer"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>CONTACT</a>
     </div>
     <div class="nav-r">
       <div class="langs" id="langs"></div>
-      <button id="mob-btn" onclick="openMobMenu()"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <button id="mbt" onclick="oMob()"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
     </div>
   </div>
 </nav>
-
 <!-- HERO -->
 <section id="hero">
   <canvas id="aurora"></canvas>
-  <div class="hero-content">
-    <div class="rune-sep"><span>ᚠ ᚢ ᚦ</span></div>
-    <h2 class="hero-h" id="t-hero">SHOW ME<br>ICELAND</h2>
-    <p class="hero-sub" id="t-heroSub">Live from the Land of Fire &amp; Ice</p>
-    <p class="hero-desc" id="t-heroDesc">Explore Iceland in real time through our network of webcams. Weather, nature and adventure — live from around the island.</p>
-    <a href="#map-section" class="hero-cta"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></svg><span id="t-xplr">EXPLORE THE MAP</span></a>
+  <div class="hcont">
+    <div class="rsep"><span>ᚠ ᚢ ᚦ</span></div>
+    <h2 class="hh">SHOW ME<br>ICELAND</h2>
+    <p class="hs">Live from the Land of Fire &amp; Ice</p>
+    <p class="hd">Explore Iceland in real time through our network of webcams. Weather, nature and adventure — live from around the island.</p>
+    <a href="#map-section" class="hcta"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></svg>EXPLORE THE MAP</a>
   </div>
-  <div class="scroll-hint"><span id="t-scroll">SCROLL</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+  <div class="schint"><span>SCROLL</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
 </section>
-
-<div class="stat-bar">
-  <div class="stat-item"><span class="stat-n">40+</span><span class="stat-l" id="t-sl1">Live Cameras</span></div>
-  <div class="stat-item"><span class="stat-n">8</span><span class="stat-l" id="t-sl2">Regions</span></div>
-  <div class="stat-item"><span class="stat-n">24/7</span><span class="stat-l" id="t-sl3">Live Feeds</span></div>
-  <div class="stat-item"><span class="stat-n">5</span><span class="stat-l" id="t-sl4">Languages</span></div>
+<div class="sbar">
+  <div class="si"><span class="sn">40+</span><span class="sl">Live Cameras</span></div>
+  <div class="si"><span class="sn">8</span><span class="sl">Regions</span></div>
+  <div class="si"><span class="sn">24/7</span><span class="sl">Live Feeds</span></div>
+  <div class="si"><span class="sn">5</span><span class="sl">Languages</span></div>
 </div>
-
-<!-- MAP SECTION -->
+<!-- MAP -->
 <section id="map-section">
-  <div class="sec-hdr">
-    <span class="sec-eye" id="t-mapEye">Interactive Map</span>
-    <h2 class="sec-title" id="t-mapTitle">Explore <span>Iceland</span></h2>
-    <p class="sec-sub" id="t-mapSub">Click any camera pin on the map to watch live footage</p>
-    <div class="gold-div"><span></span><i>ᚲ</i><span></span></div>
-  </div>
-  <div class="map-wrap">
-    <div class="map-layout">
-      <aside class="map-left">
-        <div class="ml-hero">
-          <div class="ml-title" id="t-mlTitle">SHOW ME<br>ICELAND</div>
-          <p class="ml-desc" id="t-mlDesc">Live webcams, weather and nature from around the island.</p>
-          <a href="#map-section" class="ml-btn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></svg><span id="t-xplr2">EXPLORE THE MAP</span></a>
-        </div>
-        <div class="wbhdr"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/></svg><span id="t-wbhdr">LIVE WEBCAMS</span></div>
+  <div class="shdr"><span class="seye">Interactive Map</span><h2 class="stit">Explore <span>Iceland</span></h2><p class="ssub">Click any camera pin on the map to watch live footage</p><div class="gdiv"><span></span><i>ᚲ</i><span></span></div></div>
+  <div class="mwrap">
+    <div class="mlayout">
+      <aside class="mleft">
+        <div class="mlh"><div class="mlt">SHOW ME<br>ICELAND</div><p class="mld">Live webcams, weather and nature from around the island.</p><a href="#map-section" class="mlbtn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></svg>EXPLORE</a></div>
+        <div class="wbh"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/></svg>LIVE WEBCAMS</div>
         <div class="frow" id="frow"></div>
-        <div class="cam-list" id="cam-list"></div>
-        <div class="view-all"><span id="t-vwall">VIEW ALL WEBCAMS</span><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+        <div class="clist" id="clist"></div>
+        <div class="wall">VIEW ALL WEBCAMS<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
       </aside>
-
-      <div class="map-center">
-        <div class="map-top" id="map-top">
-          <canvas id="map-aurora"></canvas>
-          <div id="map-loading">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-dasharray="40 20"/></svg>
-            <span id="t-mapLoad">Loading map…</span>
-          </div>
-          <div id="map-svg-wrap"></div>
-          <div class="map-tip" id="map-tip"></div>
+      <div class="mcent">
+        <div class="mtop" id="mtop">
+          <canvas id="map-ac"></canvas>
+          <div id="mload"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-dasharray="40 20"/></svg>Loading Iceland map…</div>
+          <div id="map-wrap"></div>
+          <div class="mtip" id="mtip"></div>
         </div>
-        <div class="live-panel">
-          <div class="lp-pic">
-            <img id="live-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='285' height='188'%3E%3Crect width='100%25' height='100%25' fill='%2303020e'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%23b8860b' font-size='11' font-family='serif'%3ESelect a webcam%3C/text%3E%3C/svg%3E" alt=""/>
-            <div class="lp-badge"><span class="ldot"></span><span id="t-live">LIVE</span></div>
+        <div class="lpan">
+          <div class="lpp">
+            <img id="limg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='186'%3E%3Crect width='100%25' height='100%25' fill='%2303020e'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%23b8860b' font-size='11' font-family='serif'%3ESelect a webcam%3C/text%3E%3C/svg%3E" alt=""/>
+            <div class="lbad"><span class="ldot"></span>LIVE</div>
           </div>
-          <div class="lp-subs" id="lp-subs"></div>
-          <div class="lp-info">
-            <div id="lp-name">—</div>
-            <div id="lp-region"></div>
-            <div class="lp-wx">
-              <div id="lp-temp">–°C</div>
-              <div class="lp-wxi"><svg viewBox="0 0 24 24"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H5"/></svg><span id="lp-wind">–</span></div>
-              <div class="lp-wxi"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg><span id="lp-dir">–</span></div>
-            </div>
-            <div class="lp-btns">
-              <button class="lp-btn" onclick="openCamLink()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/></svg><span id="t-vcam">VIEW WEBCAM</span></button>
-              <button class="lp-btn sec" onclick="toggleFav()" id="fav-btn">♡</button>
+          <div class="lsubs" id="lsubs"></div>
+          <div class="linf">
+            <div id="lnam">—</div><div id="lreg"></div>
+            <div class="lwx"><div id="ltemp">–°C</div><div class="lwxi"><svg viewBox="0 0 24 24"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H5"/></svg><span id="lwind">–</span></div><div class="lwxi"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg><span id="ldir">–</span></div></div>
+            <div class="lbtns">
+              <button class="lbtn" onclick="oCamLink()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/></svg>VIEW WEBCAM</button>
+              <button class="lbtn sec" onclick="tFav()" id="favbtn">♡</button>
             </div>
           </div>
         </div>
       </div>
-
-      <aside class="map-right">
-        <div class="reg-block"><h4 id="t-regh">ALL REGIONS</h4><div id="reg-list"></div></div>
-        <div class="wx-block">
-          <h4><svg viewBox="0 0 24 24"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H5"/><path d="M9.6 4.6A2 2 0 1 1 11 8H3"/><path d="M12.6 19.4A2 2 0 1 0 14 16H3"/></svg><span id="t-wxh">ICELAND WEATHER</span></h4>
-          <div class="wx-big"><div class="wx-icon" id="wx-icon">⛅</div><div><div class="wx-temp" id="wx-temp">–°C</div><div class="wx-desc" id="wx-desc">–</div></div></div>
-          <div class="wx-grid">
-            <div class="wx-cell"><div class="wx-lbl" id="t-wwind">Wind</div><div class="wx-val" id="wx-wind">–</div></div>
-            <div class="wx-cell"><div class="wx-lbl" id="t-wgust">Gust</div><div class="wx-val" id="wx-gust">–</div></div>
-            <div class="wx-cell"><div class="wx-lbl" id="t-whumid">Humidity</div><div class="wx-val" id="wx-humid">–</div></div>
-            <div class="wx-cell"><div class="wx-lbl" id="t-wpress">Pressure</div><div class="wx-val" id="wx-press">–</div></div>
+      <aside class="mright">
+        <div class="regb"><h4>ALL REGIONS</h4><div id="reglist"></div></div>
+        <div class="wxb">
+          <h4><svg viewBox="0 0 24 24"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H5"/><path d="M9.6 4.6A2 2 0 1 1 11 8H3"/><path d="M12.6 19.4A2 2 0 1 0 14 16H3"/></svg>ICELAND WEATHER</h4>
+          <div class="wxbig"><div class="wxi" id="wxicon">⛅</div><div><div class="wxt" id="wxtemp">–°C</div><div class="wxd" id="wxdesc">–</div></div></div>
+          <div class="wxg">
+            <div class="wxc"><div class="wxl">Wind</div><div class="wxv" id="wxwind">–</div></div>
+            <div class="wxc"><div class="wxl">Gust</div><div class="wxv" id="wxgust">–</div></div>
+            <div class="wxc"><div class="wxl">Humidity</div><div class="wxv" id="wxhumid">–</div></div>
+            <div class="wxc"><div class="wxl">Pressure</div><div class="wxv" id="wxpress">–</div></div>
           </div>
-          <div id="wx-stn"></div>
-          <button class="fc-btn" onclick="window.open('https://en.vedur.is/weather/forecasts/areas/','_blank')">
-            <span id="t-fcbtn">VIEW FORECAST</span><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-          </button>
+          <div id="wxstn"></div>
+          <button class="fcb" onclick="window.open('https://en.vedur.is/weather/forecasts/areas/','_blank')">VIEW FORECAST<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
         </div>
       </aside>
     </div>
   </div>
 </section>
-
 <!-- WEBCAMS -->
-<section id="webcams-section">
-  <div class="sec-hdr">
-    <span class="sec-eye" id="t-wbEye">Live Feeds</span>
-    <h2 class="sec-title" id="t-wbTitle">All <span>Webcams</span></h2>
-    <p class="sec-sub" id="t-wbSub">Browse all live camera feeds from across Iceland</p>
-    <div class="gold-div"><span></span><i>ᚢ</i><span></span></div>
-  </div>
-  <div class="wc-grid" id="wc-grid"></div>
+<section id="wc-sec">
+  <div class="shdr"><span class="seye">Live Feeds</span><h2 class="stit">All <span>Webcams</span></h2><p class="ssub">Browse all live camera feeds from across Iceland</p><div class="gdiv"><span></span><i>ᚢ</i><span></span></div></div>
+  <div class="wcg" id="wcg"></div>
 </section>
-
 <!-- ABOUT -->
-<section id="about-section">
-  <div class="sec-hdr">
-    <span class="sec-eye" id="t-abtEye">About</span>
-    <h2 class="sec-title" id="t-abtTitle">Our <span>Heritage</span></h2>
-    <div class="gold-div"><span></span><i>ᚦ</i><span></span></div>
-  </div>
-  <div class="about-grid" style="padding:0 20px;max-width:1100px;margin:0 auto">
-    <div class="about-card"><span class="about-rune">ᚠ</span><div class="about-title" id="t-a1t">Live from Iceland</div><p class="about-text" id="t-a1d">ShowMe Iceland aggregates live webcam feeds from Vegagerðin, LiveFromIceland, and other Icelandic sources — giving you the most complete real-time view of the island anywhere online.</p></div>
-    <div class="about-card"><span class="about-rune">ᚢ</span><div class="about-title" id="t-a2t">Real-time Weather</div><p class="about-text" id="t-a2d">Weather data sourced from Open-Meteo, providing accurate forecasts for every webcam location across Iceland — temperature, wind, humidity and pressure.</p></div>
-    <div class="about-card"><span class="about-rune">ᚦ</span><div class="about-title" id="t-a3t">Nature is Our Heritage</div><p class="about-text" id="t-a3d">Iceland's dramatic landscapes — glaciers, volcanoes, geysers and northern lights — are a global heritage. ShowMe Iceland exists to share this beauty with the world.</p></div>
+<section id="abt-sec">
+  <div class="shdr"><span class="seye">About</span><h2 class="stit">Our <span>Heritage</span></h2><div class="gdiv"><span></span><i>ᚦ</i><span></span></div></div>
+  <div class="ag" style="padding:0 20px;max-width:1080px;margin:0 auto">
+    <div class="ac"><span class="ar">ᚠ</span><div class="at">Live from Iceland</div><p class="ad">ShowMe Iceland aggregates live webcam feeds from Vegagerðin, LiveFromIceland, and other Icelandic sources — giving you the most complete real-time view of the island.</p></div>
+    <div class="ac"><span class="ar">ᚢ</span><div class="at">Real-time Weather</div><p class="ad">Weather data from Open-Meteo — accurate temperature, wind, humidity and pressure for every webcam location across Iceland, updated continuously.</p></div>
+    <div class="ac"><span class="ar">ᚦ</span><div class="at">Nature is Our Heritage</div><p class="ad">Iceland's dramatic landscapes — glaciers, volcanoes, geysers and northern lights — are a global heritage. ShowMe Iceland exists to share this beauty with the world.</p></div>
   </div>
 </section>
-
 <!-- FOOTER -->
 <footer id="footer">
-  <div class="footer-top">
-    <div class="footer-brand">
-      <div class="logo" style="margin-bottom:8px">
-        <svg class="logo-rune" viewBox="0 0 38 38"><circle cx="19" cy="19" r="17" fill="#020109" stroke="#b8860b" stroke-width="1.3"/><g stroke="#daa520" stroke-width=".95"><line x1="19" y1="2" x2="19" y2="8"/><line x1="31" y1="8" x2="27" y2="12"/><line x1="36" y1="19" x2="30" y2="19"/><line x1="31" y1="31" x2="27" y2="27"/><line x1="19" y1="36" x2="19" y2="30"/><line x1="7" y1="31" x2="11" y2="27"/><line x1="2" y1="19" x2="8" y2="19"/><line x1="7" y1="8" x2="11" y2="12"/></g><circle cx="19" cy="19" r="3" fill="#daa520"/></svg>
-        <h1 style="font-family:'Cinzel Decorative',serif;font-size:13px;color:var(--gold2)">SHOWME.IS</h1>
-      </div>
-      <p id="t-footDesc">Iceland in real time. Webcams, weather and nature — live from around the island.</p>
-    </div>
-    <div class="footer-col"><h5 id="t-fl1h">Explore</h5><a href="#map-section" id="t-fl1a">Interactive Map</a><a href="#webcams-section" id="t-fl1b">All Webcams</a><a href="#about-section" id="t-fl1c">About</a></div>
-    <div class="footer-col"><h5 id="t-fl2h">Data Sources</h5><a href="https://umferdin.is/en/cameras" target="_blank">Vegagerðin</a><a href="https://livefromiceland.is" target="_blank">LiveFromIceland</a><a href="https://open-meteo.com" target="_blank">Open-Meteo</a></div>
-    <div class="footer-col"><h5 id="t-fl3h">Iceland</h5><a href="https://www.visiticeland.com" target="_blank" id="t-fl3a">Visit Iceland</a><a href="https://en.vedur.is" target="_blank" id="t-fl3b">Weather Office</a><a href="https://safetravel.is" target="_blank" id="t-fl3c">Safe Travel</a></div>
+  <div class="ftop">
+    <div class="fb2"><div class="logo" style="margin-bottom:7px"><svg class="logo-rune" viewBox="0 0 38 38"><circle cx="19" cy="19" r="17" fill="#020109" stroke="#b8860b" stroke-width="1.3"/><g stroke="#daa520" stroke-width=".9"><line x1="19" y1="2" x2="19" y2="8"/><line x1="31" y1="8" x2="27" y2="12"/><line x1="36" y1="19" x2="30" y2="19"/><line x1="31" y1="31" x2="27" y2="27"/><line x1="19" y1="36" x2="19" y2="30"/><line x1="7" y1="31" x2="11" y2="27"/><line x1="2" y1="19" x2="8" y2="19"/><line x1="7" y1="8" x2="11" y2="12"/></g><circle cx="19" cy="19" r="3" fill="#daa520"/></svg><h1 style="font-family:'Cinzel Decorative',serif;font-size:12.5px;color:var(--gold2)">SHOWME.IS</h1></div><p>Iceland in real time. Webcams, weather and nature — live from around the island.</p></div>
+    <div class="fc"><h5>Explore</h5><a href="#map-section">Interactive Map</a><a href="#wc-sec">All Webcams</a><a href="#abt-sec">About</a></div>
+    <div class="fc"><h5>Data Sources</h5><a href="https://umferdin.is/en/cameras" target="_blank">Vegagerðin</a><a href="https://livefromiceland.is" target="_blank">LiveFromIceland</a><a href="https://open-meteo.com" target="_blank">Open-Meteo</a></div>
+    <div class="fc"><h5>Iceland</h5><a href="https://www.visiticeland.com" target="_blank">Visit Iceland</a><a href="https://en.vedur.is" target="_blank">Veðurstofa</a><a href="https://safetravel.is" target="_blank">Safe Travel</a></div>
   </div>
-  <div class="footer-btm"><span id="t-fc1">NATURE IS OUR HERITAGE</span><span class="ship">⛵</span><span id="t-fc2">RESPECT IT — PROTECT IT</span></div>
+  <div class="fbtm"><span>NATURE IS OUR HERITAGE</span><span class="ship">⛵</span><span>RESPECT IT — PROTECT IT</span></div>
 </footer>
-
-<!-- D3 + TopoJSON from cdnjs (CSP-approved) -->
+<!-- D3 + TopoJSON from cdnjs -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
-
 <script>
-// ══ TRANSLATIONS ══════════════════════════════════════════
-const TR={
-  en:{logosub:"Show Me Iceland",nmap:"MAP",nweb:"WEBCAMS",nabt:"ABOUT",ncon:"CONTACT",hero:"SHOW ME<br>ICELAND",heroSub:"Live from the Land of Fire & Ice",heroDesc:"Explore Iceland in real time through our network of webcams. Weather, nature and adventure — live from around the island.",xplr:"EXPLORE THE MAP",xplr2:"EXPLORE THE MAP",scroll:"SCROLL",sl1:"Live Cameras",sl2:"Regions",sl3:"Live Feeds",sl4:"Languages",mapEye:"Interactive Map",mapTitle:"Explore <span>Iceland</span>",mapSub:"Click any camera pin on the map to watch live footage",mapLoad:"Loading map…",mlTitle:"SHOW ME<br>ICELAND",mlDesc:"Live webcams, weather and nature from around the island.",wbhdr:"LIVE WEBCAMS",vwall:"VIEW ALL WEBCAMS",live:"LIVE",vcam:"VIEW WEBCAM",regh:"ALL REGIONS",wxh:"ICELAND WEATHER",wwind:"Wind",wgust:"Gust",whumid:"Humidity",wpress:"Pressure",fcbtn:"VIEW FORECAST",wbEye:"Live Feeds",wbTitle:"All <span>Webcams</span>",wbSub:"Browse all live camera feeds from across Iceland",abtEye:"About",abtTitle:"Our <span>Heritage</span>",a1t:"Live from Iceland",a1d:"ShowMe Iceland aggregates live webcam feeds from Vegagerðin, LiveFromIceland, and other Icelandic sources.",a2t:"Real-time Weather",a2d:"Weather data from Open-Meteo — temperature, wind, humidity and pressure for every location.",a3t:"Nature is Our Heritage",a3d:"Iceland's dramatic landscapes — glaciers, volcanoes, geysers and northern lights — are a global heritage.",footDesc:"Iceland in real time. Webcams, weather and nature — live from around the island.",fl1h:"Explore",fl1a:"Interactive Map",fl1b:"All Webcams",fl1c:"About",fl2h:"Data Sources",fl3h:"Iceland",fl3a:"Visit Iceland",fl3b:"Weather Office",fl3c:"Safe Travel",fc1:"NATURE IS OUR HERITAGE",fc2:"RESPECT IT — PROTECT IT","lb-no-p":"This webcam streams through an external provider.","lb-open":"OPEN LIVE WEBCAM",regions:["All Regions","Capital Region","S. Peninsula","Western Iceland","Westfjords","North Iceland","East Iceland","SE Iceland","South Iceland"],filters:["All","Nature","Volcano","Glacier","City","Road"]},
-  is:{logosub:"Sýndu mér Ísland",nmap:"KORT",nweb:"MYNDAVÉLAR",nabt:"UM",ncon:"SAMBAND",hero:"SÝNDU MÉR<br>ÍSLAND",heroSub:"Beinlífsending frá landi eldsins og ísins",heroDesc:"Skoðaðu Ísland í beinni sendingu í gegnum net okkar af vefmyndavélum. Veður, náttúra og ævintýri — beint frá eyjunni.",xplr:"SKOÐA KORTIÐ",xplr2:"SKOÐA KORTIÐ",scroll:"FLETTA",sl1:"Myndavélar",sl2:"Svæði",sl3:"Beint",sl4:"Tungumál",mapEye:"Gagnvirkt Kort",mapTitle:"Skoðaðu <span>Ísland</span>",mapSub:"Smelltu á myndavélapin á kortinu til að horfa á beina sendingu",mapLoad:"Hleð korti…",mlTitle:"SÝNDU MÉR<br>ÍSLAND",mlDesc:"Beinar myndavélar, veður og náttúra frá öllu landinu.",wbhdr:"BEINAR SENDINGAR",vwall:"ALLAR MYNDAVÉLAR",live:"BEINT",vcam:"SKOÐA MYNDAVÉL",regh:"ÖLL SVÆÐI",wxh:"VEÐUR Á ÍSLANDI",wwind:"Vindur",wgust:"Vindhviða",whumid:"Rakastig",wpress:"Þrýstingur",fcbtn:"VEÐURSPÁ",wbEye:"Beinar Sendingar",wbTitle:"Allar <span>Myndavélar</span>",wbSub:"Skoðaðu allar beinar myndavélasendingar frá Íslandi",abtEye:"Um Okkur",abtTitle:"Arfur <span>Okkar</span>",a1t:"Beint frá Íslandi",a1d:"ShowMe Iceland safnar saman beinum myndavélastraumum frá Vegagerðinni og öðrum íslenskum heimildum.",a2t:"Veður í Rauntíma",a2d:"Veðurgögn frá Open-Meteo — hiti, vindur, rakastig og þrýstingur.",a3t:"Náttúran er Arfur Okkar",a3d:"Dramatískt landslag Íslands — jöklar, eldfjöll, goshverir og norðurljós — er heimsarfur.",footDesc:"Ísland í rauntíma. Myndavélar, veður og náttúra — beint frá eyjunni.",fl1h:"Skoða",fl1a:"Gagnvirkt Kort",fl1b:"Allar Myndavélar",fl1c:"Um Okkur",fl2h:"Gagnlindir",fl3h:"Ísland",fl3a:"Ferðamálastofa",fl3b:"Veðurstofa",fl3c:"Safe Travel",fc1:"NÁTTÚRAN ER ARF OKKAR",fc2:"VIRTU OG VERNDAÐU","lb-no-p":"Þessi myndavél streymir í gegnum ytri þjónustu.","lb-open":"OPNA BEINA SENDINGU",regions:["Öll svæði","Höfuðborgar.","Suðurnes","Vesturland","Vestfirðir","Norðurland","Austurland","Suðaustur.","Suðurland"],filters:["Allt","Náttúra","Eldfjall","Jökull","Borg","Vegur"]},
-  de:{logosub:"Zeig mir Island",nmap:"KARTE",nweb:"WEBCAMS",nabt:"ÜBER",ncon:"KONTAKT",hero:"ZEIG MIR<br>ISLAND",heroSub:"Live aus dem Land des Feuers und des Eises",heroDesc:"Entdecke Island in Echtzeit durch unser Webcam-Netzwerk. Wetter, Natur und Abenteuer — live von der Insel.",xplr:"KARTE ERKUNDEN",xplr2:"KARTE ERKUNDEN",scroll:"SCROLLEN",sl1:"Kameras",sl2:"Regionen",sl3:"Live-Feeds",sl4:"Sprachen",mapEye:"Interaktive Karte",mapTitle:"Erkunde <span>Island</span>",mapSub:"Klicke auf einen Pin für Live-Aufnahmen",mapLoad:"Karte lädt…",mlTitle:"ZEIG MIR<br>ISLAND",mlDesc:"Live-Webcams, Wetter und Natur von der ganzen Insel.",wbhdr:"LIVE WEBCAMS",vwall:"ALLE WEBCAMS",live:"LIVE",vcam:"WEBCAM ANSEHEN",regh:"ALLE REGIONEN",wxh:"ISLAND WETTER",wwind:"Wind",wgust:"Böen",whumid:"Feuchte",wpress:"Druck",fcbtn:"VORHERSAGE",wbEye:"Live-Feeds",wbTitle:"Alle <span>Webcams</span>",wbSub:"Alle Live-Kamerafeeds aus Island",abtEye:"Über",abtTitle:"Unser <span>Erbe</span>",a1t:"Live aus Island",a1d:"ShowMe Iceland bündelt Live-Webcam-Feeds von Vegagerðin und anderen isländischen Quellen.",a2t:"Echtzeit-Wetter",a2d:"Wetterdaten von Open-Meteo für jeden Webcam-Standort in Island.",a3t:"Die Natur ist unser Erbe",a3d:"Islands Landschaften — Gletscher, Vulkane, Geysire und Nordlichter — sind ein globales Erbe.",footDesc:"Island in Echtzeit. Webcams, Wetter und Natur — live von der Insel.",fl1h:"Erkunden",fl1a:"Karte",fl1b:"Webcams",fl1c:"Über",fl2h:"Datenquellen",fl3h:"Island",fl3a:"Visit Iceland",fl3b:"Wetterbehörde",fl3c:"Sicheres Reisen",fc1:"DIE NATUR IST UNSER ERBE",fc2:"RESPEKTIERE — SCHÜTZE SIE","lb-no-p":"Diese Webcam streamt über einen externen Anbieter.","lb-open":"WEBCAM ÖFFNEN",regions:["Alle","Hauptstadt","S. Halbinsel","Westisland","Westfjorde","Nordisland","Ostisland","SO-Island","Südisland"],filters:["Alle","Natur","Vulkan","Gletscher","Stadt","Straße"]},
-  fr:{logosub:"Montre-moi l'Islande",nmap:"CARTE",nweb:"WEBCAMS",nabt:"À PROPOS",ncon:"CONTACT",hero:"MONTRE-MOI<br>L'ISLANDE",heroSub:"En direct du pays du feu et des glaces",heroDesc:"Explorez l'Islande en temps réel grâce à notre réseau de webcams. Météo, nature et aventure — en direct.",xplr:"EXPLORER",xplr2:"EXPLORER",scroll:"DÉFILER",sl1:"Caméras",sl2:"Régions",sl3:"Flux live",sl4:"Langues",mapEye:"Carte Interactive",mapTitle:"Explorer <span>l'Islande</span>",mapSub:"Cliquez sur une épingle pour voir les images en direct",mapLoad:"Chargement…",mlTitle:"MONTRE-MOI<br>L'ISLANDE",mlDesc:"Webcams, météo et nature en direct de l'île.",wbhdr:"WEBCAMS EN DIRECT",vwall:"TOUTES LES WEBCAMS",live:"EN DIRECT",vcam:"VOIR WEBCAM",regh:"TOUTES LES RÉGIONS",wxh:"MÉTÉO ISLANDE",wwind:"Vent",wgust:"Rafales",whumid:"Humidité",wpress:"Pression",fcbtn:"PRÉVISIONS",wbEye:"Flux en Direct",wbTitle:"Toutes les <span>Webcams</span>",wbSub:"Tous les flux de caméras en direct d'Islande",abtEye:"À Propos",abtTitle:"Notre <span>Héritage</span>",a1t:"En direct d'Islande",a1d:"ShowMe Iceland agrège des flux webcam de Vegagerðin et d'autres sources islandaises.",a2t:"Météo en temps réel",a2d:"Données météo d'Open-Meteo pour chaque emplacement de webcam.",a3t:"La nature est notre patrimoine",a3d:"Les paysages d'Islande — glaciers, volcans, geysers et aurores — sont un patrimoine mondial.",footDesc:"L'Islande en temps réel. Webcams, météo et nature — en direct.",fl1h:"Explorer",fl1a:"Carte",fl1b:"Webcams",fl1c:"À Propos",fl2h:"Sources",fl3h:"Islande",fl3a:"Visit Iceland",fl3b:"Météo",fl3c:"Voyage Sûr",fc1:"LA NATURE EST NOTRE PATRIMOINE",fc2:"RESPECTEZ — PROTÉGEZ","lb-no-p":"Cette webcam diffuse via un fournisseur externe.","lb-open":"OUVRIR WEBCAM",regions:["Toutes","Capitale","Pén. Sud","Islande O.","Fjords O.","Islande N.","Islande E.","SE Islande","Islande S."],filters:["Tout","Nature","Volcan","Glacier","Ville","Route"]},
-  es:{logosub:"Muéstrame Islandia",nmap:"MAPA",nweb:"WEBCAMS",nabt:"ACERCA",ncon:"CONTACTO",hero:"MUÉSTRAME<br>ISLANDIA",heroSub:"En vivo desde la Tierra del Fuego y el Hielo",heroDesc:"Explora Islandia en tiempo real a través de nuestra red de webcams. Clima, naturaleza y aventura — en vivo.",xplr:"EXPLORAR",xplr2:"EXPLORAR",scroll:"DESPLAZAR",sl1:"Cámaras",sl2:"Regiones",sl3:"Transmisiones",sl4:"Idiomas",mapEye:"Mapa Interactivo",mapTitle:"Explora <span>Islandia</span>",mapSub:"Haz clic en un marcador para ver las imágenes en vivo",mapLoad:"Cargando…",mlTitle:"MUÉSTRAME<br>ISLANDIA",mlDesc:"Webcams, clima y naturaleza en vivo desde la isla.",wbhdr:"WEBCAMS EN VIVO",vwall:"TODAS LAS WEBCAMS",live:"EN VIVO",vcam:"VER WEBCAM",regh:"TODAS LAS REGIONES",wxh:"CLIMA DE ISLANDIA",wwind:"Viento",wgust:"Ráfagas",whumid:"Humedad",wpress:"Presión",fcbtn:"PRONÓSTICO",wbEye:"Transmisiones",wbTitle:"Todas las <span>Webcams</span>",wbSub:"Todos los feeds de cámaras en vivo de Islandia",abtEye:"Acerca",abtTitle:"Nuestro <span>Patrimonio</span>",a1t:"En vivo desde Islandia",a1d:"ShowMe Iceland agrega transmisiones de Vegagerðin y otras fuentes islandesas.",a2t:"Clima en tiempo real",a2d:"Datos meteorológicos de Open-Meteo para cada ubicación de webcam.",a3t:"La naturaleza es nuestro patrimonio",a3d:"Los paisajes de Islandia — glaciares, volcanes, géiseres y auroras — son un patrimonio global.",footDesc:"Islandia en tiempo real. Webcams, clima y naturaleza — en vivo.",fl1h:"Explorar",fl1a:"Mapa",fl1b:"Webcams",fl1c:"Acerca",fl2h:"Fuentes",fl3h:"Islandia",fl3a:"Visit Iceland",fl3b:"Tiempo",fl3c:"Viaje Seguro",fc1:"LA NATURALEZA ES NUESTRO PATRIMONIO",fc2:"RESPÉTALA — PROTÉGELA","lb-no-p":"Esta webcam transmite a través de un proveedor externo.","lb-open":"ABRIR WEBCAM",regions:["Todas","Capital","Pen. Sur","Isl. Oeste","Fiordos O.","Isl. Norte","Isl. Este","SE Islandia","Isl. Sur"],filters:["Todo","Naturaleza","Volcán","Glaciar","Ciudad","Carretera"]}
-};
+// ═══ CAMERA DATA ═══════════════════════════════
+const PROXY='/api/cam';
+const VGD='https://www.vegagerdin.is/vgdata/vefmyndavelar/';
+function cU(slug,n){return PROXY+'?cam='+slug+'&n='+n;}
+function cUD(slug,n){return VGD+slug+'_'+n+'.jpg';}
 
-const LANG_FLAGS={en:'<svg viewBox="0 0 60 40"><rect width="60" height="40" fill="#012169"/><path d="M0,0L60,40M60,0L0,40" stroke="#fff" stroke-width="8"/><path d="M0,0L60,40M60,0L0,40" stroke="#C8102E" stroke-width="5"/><path d="M30,0V40M0,20H60" stroke="#fff" stroke-width="13"/><path d="M30,0V40M0,20H60" stroke="#C8102E" stroke-width="8"/></svg>',is:'<svg viewBox="0 0 60 40"><rect width="60" height="40" fill="#003897"/><path d="M15,0V40M0,20H60" stroke="#fff" stroke-width="9"/><path d="M15,0V40M0,20H60" stroke="#d72828" stroke-width="5"/></svg>',de:'<svg viewBox="0 0 60 40"><rect width="60" height="40" fill="#FFCE00"/><rect width="60" height="27" fill="#DD0000"/><rect width="60" height="13" fill="#000"/></svg>',fr:'<svg viewBox="0 0 60 40"><rect width="60" height="40" fill="#ED2939"/><rect width="40" height="40" fill="#fff"/><rect width="20" height="40" fill="#002395"/></svg>',es:'<svg viewBox="0 0 60 40"><rect width="60" height="40" fill="#AA151B"/><rect y="10" width="60" height="20" fill="#F1BF00"/></svg>'};
-
-let lang='en';
-function t(k){return(TR[lang]||TR.en)[k]||''}
-function setLang(l){
-  lang=l;
-  document.querySelectorAll('.lb').forEach(b=>b.classList.toggle('on',b.dataset.l===l));
-  document.querySelectorAll('.mob-lb').forEach(b=>b.classList.toggle('on',b.dataset.l===l));
-  applyTr();renderList();renderRegions();renderGrid();
-  const fs=t('filters'),fbs=document.querySelectorAll('.fb');
-  fbs.forEach((b,i)=>{if(fs[i])b.textContent=fs[i];});
-}
-function applyTr(){
-  ['logosub','nmap','nweb','nabt','ncon','hero','heroSub','heroDesc','xplr','xplr2','scroll',
-   'sl1','sl2','sl3','sl4','mapEye','mapTitle','mapSub','mapLoad','mlTitle','mlDesc',
-   'wbhdr','vwall','live','vcam','regh','wxh','wwind','wgust','whumid','wpress','fcbtn',
-   'wbEye','wbTitle','wbSub','abtEye','abtTitle','a1t','a1d','a2t','a2d','a3t','a3d',
-   'footDesc','fl1h','fl1a','fl1b','fl1c','fl2h','fl3h','fl3a','fl3b','fl3c','fc1','fc2',
-   'lb-no-p','lb-open','nmap2','nweb2','nabt2','ncon2'].forEach(k=>{
-    const el=document.getElementById('t-'+k);
-    if(el)el.innerHTML=t(k);
-  });
-}
-function buildLangBtns(){
-  const container=document.getElementById('langs');
-  const mobContainer=document.getElementById('mob-langs');
-  ['en','is','de','fr','es'].forEach(l=>{
-    const btn=document.createElement('button');
-    btn.className='lb'+(l===lang?' on':'');
-    btn.dataset.l=l;
-    btn.innerHTML=`<span class="flag">${LANG_FLAGS[l]}</span>${l.toUpperCase()}`;
-    btn.onclick=()=>setLang(l);
-    container.appendChild(btn);
-    const mob=btn.cloneNode(true);
-    mob.className='lb mob-lb'+(l===lang?' on':'');
-    mob.style='font-size:13px;padding:7px 12px';
-    mob.onclick=()=>{setLang(l);closeMobMenu();};
-    mobContainer.appendChild(mob);
-  });
-}
-function openMobMenu(){document.getElementById('mob-menu').style.display='flex';document.body.style.overflow='hidden';}
-function closeMobMenu(){document.getElementById('mob-menu').style.display='none';document.body.style.overflow='';}
-
-// ══ CAMERA DATA ═══════════════════════════════════════════
-const VG_DIRECT='https://www.vegagerdin.is/vgdata/vefmyndavelar/';
-// Use our proxy API to bypass Vegagerðin hotlink protection
-// Falls back to direct URL if proxy fails
-function camUrl(slug, n) {
-  return `/api/cam?cam=${slug}&n=${n}&t=${Math.floor(Date.now()/30000)}`;
-}
-function camUrlDirect(slug, n) {
-  return `${VG_DIRECT}${slug}_${n}.jpg`;
-}
 const CAMS=[
-  // Road cameras — have direct JPG streams
-  {id:1, name:"Ártúnsbrekka",      reg:1,lat:64.137,lon:-21.975,imgs:["artunsbrekka",4],     wx:[64.14,-21.90],tags:["r","b"],url:"https://umferdin.is/en/cameras"},
-  {id:2, name:"Kringlan",           reg:1,lat:64.130,lon:-21.960,imgs:["kringlan",4],          wx:[64.14,-21.90],tags:["r","b"],url:"https://umferdin.is/en/cameras"},
-  {id:3, name:"Bústaðabrú",         reg:1,lat:64.118,lon:-21.958,imgs:["bustadabru",4],        wx:[64.14,-21.90],tags:["r","b"],url:"https://umferdin.is/en/cameras"},
-  {id:4, name:"Arnarneshæð",        reg:1,lat:64.098,lon:-21.950,imgs:["arnarneshaed",4],      wx:[64.14,-21.90],tags:["r","b"],url:"https://umferdin.is/en/cameras"},
-  {id:5, name:"Engidalur",          reg:1,lat:64.060,lon:-21.966,imgs:["engidalur",4],         wx:[64.14,-21.90],tags:["r","b"],url:"https://umferdin.is/en/cameras"},
-  {id:6, name:"Leirvogstungumelar", reg:1,lat:64.195,lon:-21.810,imgs:["leirvogstungumelar",4],wx:[64.14,-21.90],tags:["r"],    url:"https://umferdin.is/en/cameras"},
-  {id:7, name:"Kambar",             reg:2,lat:64.017,lon:-21.333,imgs:["kambar",4],            wx:[64.03,-21.38],tags:["r","n"],url:"https://umferdin.is/en/cameras"},
-  {id:8, name:"Hellisheiði",        reg:2,lat:64.030,lon:-21.380,imgs:["hellisheidi",3],       wx:[64.03,-21.38],tags:["r","n"],url:"https://umferdin.is/en/cameras"},
-  {id:9, name:"Hellisbrú",          reg:2,lat:63.938,lon:-21.032,imgs:["hellisbru",4],         wx:[63.94,-21.00],tags:["r"],    url:"https://umferdin.is/en/cameras"},
-  {id:10,name:"Kotströnd",          reg:8,lat:63.940,lon:-20.900,imgs:["kotstrond",3],         wx:[63.94,-20.90],tags:["r"],    url:"https://umferdin.is/en/cameras"},
-  // Landmark / nature cams — external stream
-  {id:11,name:"Tjörnin",            reg:1,lat:64.146,lon:-21.943,imgs:null,wx:[64.14,-21.90],tags:["b"],    url:"https://livefromiceland.is/webcam/reykjavikurtjorn/"},
-  {id:12,name:"Austurvöllur",       reg:1,lat:64.147,lon:-21.940,imgs:null,wx:[64.14,-21.90],tags:["b"],    url:"https://livefromiceland.is/webcam/austurvollur/"},
-  {id:13,name:"Hekla",              reg:8,lat:63.980,lon:-19.666,imgs:null,wx:[63.98,-19.67],tags:["e"],    url:"https://livefromiceland.is/webcam/hekla/"},
-  {id:14,name:"Eyjafjallajökull",   reg:8,lat:63.630,lon:-19.613,imgs:null,wx:[63.63,-19.61],tags:["e","j"],url:"https://livefromiceland.is/webcam/eyjafjallajokull/"},
-  {id:15,name:"Katla – Háfell",     reg:8,lat:63.670,lon:-19.060,imgs:null,wx:[63.67,-19.06],tags:["e","j"],url:"https://livefromiceland.is/webcam/hafell-katla/"},
-  {id:16,name:"Hagafell",           reg:2,lat:63.862,lon:-22.482,imgs:null,wx:[63.86,-22.48],tags:["e"],    url:"https://livefromiceland.is/webcam/hagafell/"},
-  {id:17,name:"Akureyri",           reg:5,lat:65.683,lon:-18.112,imgs:null,wx:[65.68,-18.11],tags:["b"],    url:"https://livefromiceland.is/webcam/akureyri/"},
-  {id:18,name:"Hlíðarfjall",        reg:5,lat:65.700,lon:-18.070,imgs:null,wx:[65.70,-18.07],tags:["n"],    url:"https://livefromiceland.is/webcam/akureyri-hlidarfjall/"},
-  {id:19,name:"Jökulsárlón",        reg:7,lat:64.078,lon:-16.181,imgs:null,wx:[64.08,-16.18],tags:["j","n"],url:"https://www.skylinewebcams.com/en/webcam/iceland/austurland/hofn/jokulsarlon.html"},
-  {id:20,name:"Snæfellsjökull",     reg:3,lat:64.808,lon:-23.775,imgs:null,wx:[64.81,-23.78],tags:["j","n"],url:"https://livefromiceland.is/"},
-  {id:21,name:"Kirkjufell",         reg:3,lat:64.940,lon:-23.305,imgs:null,wx:[64.94,-23.31],tags:["n"],    url:"https://livefromiceland.is/"},
-  {id:22,name:"Húsavík",            reg:5,lat:66.044,lon:-17.339,imgs:null,wx:[66.04,-17.34],tags:["h","b"],url:"https://www.webcamtaxi.com/en/iceland.html"},
-  {id:23,name:"Mývatn",             reg:5,lat:65.600,lon:-17.005,imgs:null,wx:[65.60,-17.01],tags:["n"],    url:"https://livefromiceland.is/"},
-  {id:24,name:"Goðafoss",           reg:5,lat:65.683,lon:-17.550,imgs:null,wx:[65.68,-17.55],tags:["n"],    url:"https://livefromiceland.is/"},
-  {id:25,name:"Þingvellir",         reg:1,lat:64.255,lon:-21.130,imgs:null,wx:[64.26,-21.13],tags:["n","b"],url:"https://livefromiceland.is/"},
-  {id:26,name:"Gullfoss",           reg:8,lat:64.326,lon:-20.121,imgs:null,wx:[64.33,-20.12],tags:["n"],    url:"https://livefromiceland.is/"},
-  {id:27,name:"Geysir – Strokkur",  reg:8,lat:64.313,lon:-20.302,imgs:null,wx:[64.31,-20.30],tags:["n"],    url:"https://livefromiceland.is/"},
-  {id:28,name:"Seljalandsfoss",     reg:8,lat:63.616,lon:-19.986,imgs:null,wx:[63.62,-19.99],tags:["n"],    url:"https://livefromiceland.is/"},
-  {id:29,name:"Vík í Mýrdal",       reg:8,lat:63.419,lon:-19.005,imgs:null,wx:[63.42,-19.01],tags:["b","n"],url:"https://www.vegagerdin.is/"},
-  {id:30,name:"Vestmannaeyjar",     reg:8,lat:63.440,lon:-20.270,imgs:null,wx:[63.44,-20.27],tags:["e","h"],url:"https://www.vegagerdin.is/"},
-  {id:31,name:"Höfn",               reg:7,lat:64.252,lon:-15.212,imgs:null,wx:[64.25,-15.21],tags:["h","b"],url:"https://www.vegagerdin.is/"},
-  {id:32,name:"Egilsstaðir",        reg:6,lat:65.270,lon:-14.394,imgs:null,wx:[65.27,-14.39],tags:["b"],    url:"https://www.vegagerdin.is/"},
-  {id:33,name:"Seyðisfjörður",      reg:6,lat:65.256,lon:-13.993,imgs:null,wx:[65.26,-13.99],tags:["b","h"],url:"https://www.vegagerdin.is/"},
-  {id:34,name:"Ísafjörður",         reg:4,lat:66.075,lon:-23.135,imgs:null,wx:[66.08,-23.14],tags:["b","h"],url:"https://www.vegagerdin.is/"},
-  {id:35,name:"Skaftafell",         reg:7,lat:63.998,lon:-16.968,imgs:null,wx:[64.00,-16.97],tags:["n","j"],url:"https://livefromiceland.is/"},
-  {id:36,name:"Þórsmörk",           reg:8,lat:63.683,lon:-19.499,imgs:null,wx:[63.68,-19.50],tags:["n"],    url:"https://livefromiceland.is/"},
-  {id:37,name:"Dalvík",             reg:5,lat:65.970,lon:-18.527,imgs:null,wx:[65.97,-18.53],tags:["h"],    url:"https://www.vegagerdin.is/"},
-  {id:38,name:"Siglufjörður",       reg:5,lat:66.153,lon:-18.905,imgs:null,wx:[66.15,-18.91],tags:["h","b"],url:"https://www.vegagerdin.is/"},
-  {id:39,name:"Stykkishólmur",      reg:3,lat:65.074,lon:-22.729,imgs:null,wx:[65.07,-22.73],tags:["h","b"],url:"https://www.vegagerdin.is/"},
-  {id:40,name:"Landmannalaugar",    reg:8,lat:63.984,lon:-19.066,imgs:null,wx:[63.98,-19.07],tags:["n"],    url:"https://livefromiceland.is/"},
+  {id:1,name:"Ártúnsbrekka",reg:1,lat:64.137,lon:-21.975,imgs:["artunsbrekka",4],wx:[64.14,-21.90],tags:["r","b"],url:"https://umferdin.is/en/cameras"},
+  {id:2,name:"Kringlan",reg:1,lat:64.130,lon:-21.960,imgs:["kringlan",4],wx:[64.14,-21.90],tags:["r","b"],url:"https://umferdin.is/en/cameras"},
+  {id:3,name:"Bústaðabrú",reg:1,lat:64.118,lon:-21.958,imgs:["bustadabru",4],wx:[64.14,-21.90],tags:["r","b"],url:"https://umferdin.is/en/cameras"},
+  {id:4,name:"Arnarneshæð",reg:1,lat:64.098,lon:-21.950,imgs:["arnarneshaed",4],wx:[64.14,-21.90],tags:["r","b"],url:"https://umferdin.is/en/cameras"},
+  {id:5,name:"Engidalur",reg:1,lat:64.060,lon:-21.966,imgs:["engidalur",4],wx:[64.14,-21.90],tags:["r","b"],url:"https://umferdin.is/en/cameras"},
+  {id:6,name:"Leirvogstungumelar",reg:1,lat:64.195,lon:-21.810,imgs:["leirvogstungumelar",4],wx:[64.14,-21.90],tags:["r"],url:"https://umferdin.is/en/cameras"},
+  {id:7,name:"Kambar",reg:2,lat:64.017,lon:-21.333,imgs:["kambar",4],wx:[64.03,-21.38],tags:["r","n"],url:"https://umferdin.is/en/cameras"},
+  {id:8,name:"Hellisheiði",reg:2,lat:64.030,lon:-21.380,imgs:["hellisheidi",3],wx:[64.03,-21.38],tags:["r","n"],url:"https://umferdin.is/en/cameras"},
+  {id:9,name:"Hellisbrú",reg:2,lat:63.938,lon:-21.032,imgs:["hellisbru",4],wx:[63.94,-21.00],tags:["r"],url:"https://umferdin.is/en/cameras"},
+  {id:10,name:"Kotströnd",reg:8,lat:63.940,lon:-20.900,imgs:["kotstrond",3],wx:[63.94,-20.90],tags:["r"],url:"https://umferdin.is/en/cameras"},
+  {id:11,name:"Tjörnin",reg:1,lat:64.146,lon:-21.943,imgs:null,wx:[64.14,-21.90],tags:["b"],url:"https://livefromiceland.is/webcam/reykjavikurtjorn/"},
+  {id:12,name:"Austurvöllur",reg:1,lat:64.147,lon:-21.940,imgs:null,wx:[64.14,-21.90],tags:["b"],url:"https://livefromiceland.is/webcam/austurvollur/"},
+  {id:13,name:"Hekla",reg:8,lat:63.980,lon:-19.666,imgs:null,wx:[63.98,-19.67],tags:["e"],url:"https://livefromiceland.is/webcam/hekla/"},
+  {id:14,name:"Eyjafjallajökull",reg:8,lat:63.630,lon:-19.613,imgs:null,wx:[63.63,-19.61],tags:["e","j"],url:"https://livefromiceland.is/webcam/eyjafjallajokull/"},
+  {id:15,name:"Katla",reg:8,lat:63.670,lon:-19.060,imgs:null,wx:[63.67,-19.06],tags:["e","j"],url:"https://livefromiceland.is/webcam/hafell-katla/"},
+  {id:16,name:"Hagafell",reg:2,lat:63.862,lon:-22.482,imgs:null,wx:[63.86,-22.48],tags:["e"],url:"https://livefromiceland.is/webcam/hagafell/"},
+  {id:17,name:"Akureyri",reg:5,lat:65.683,lon:-18.112,imgs:null,wx:[65.68,-18.11],tags:["b"],url:"https://livefromiceland.is/webcam/akureyri/"},
+  {id:18,name:"Hlíðarfjall",reg:5,lat:65.700,lon:-18.070,imgs:null,wx:[65.70,-18.07],tags:["n"],url:"https://livefromiceland.is/webcam/akureyri-hlidarfjall/"},
+  {id:19,name:"Jökulsárlón",reg:7,lat:64.078,lon:-16.181,imgs:null,wx:[64.08,-16.18],tags:["j","n"],url:"https://www.skylinewebcams.com/en/webcam/iceland/austurland/hofn/jokulsarlon.html"},
+  {id:20,name:"Snæfellsjökull",reg:3,lat:64.808,lon:-23.775,imgs:null,wx:[64.81,-23.78],tags:["j","n"],url:"https://livefromiceland.is/"},
+  {id:21,name:"Kirkjufell",reg:3,lat:64.940,lon:-23.305,imgs:null,wx:[64.94,-23.31],tags:["n"],url:"https://livefromiceland.is/"},
+  {id:22,name:"Húsavík",reg:5,lat:66.044,lon:-17.339,imgs:null,wx:[66.04,-17.34],tags:["h","b"],url:"https://www.webcamtaxi.com/en/iceland.html"},
+  {id:23,name:"Mývatn",reg:5,lat:65.600,lon:-17.005,imgs:null,wx:[65.60,-17.01],tags:["n"],url:"https://livefromiceland.is/"},
+  {id:24,name:"Goðafoss",reg:5,lat:65.683,lon:-17.550,imgs:null,wx:[65.68,-17.55],tags:["n"],url:"https://livefromiceland.is/"},
+  {id:25,name:"Þingvellir",reg:1,lat:64.255,lon:-21.130,imgs:null,wx:[64.26,-21.13],tags:["n","b"],url:"https://livefromiceland.is/"},
+  {id:26,name:"Gullfoss",reg:8,lat:64.326,lon:-20.121,imgs:null,wx:[64.33,-20.12],tags:["n"],url:"https://livefromiceland.is/"},
+  {id:27,name:"Geysir",reg:8,lat:64.313,lon:-20.302,imgs:null,wx:[64.31,-20.30],tags:["n"],url:"https://livefromiceland.is/"},
+  {id:28,name:"Seljalandsfoss",reg:8,lat:63.616,lon:-19.986,imgs:null,wx:[63.62,-19.99],tags:["n"],url:"https://livefromiceland.is/"},
+  {id:29,name:"Vík í Mýrdal",reg:8,lat:63.419,lon:-19.005,imgs:null,wx:[63.42,-19.01],tags:["b","n"],url:"https://www.vegagerdin.is/"},
+  {id:30,name:"Vestmannaeyjar",reg:8,lat:63.440,lon:-20.270,imgs:null,wx:[63.44,-20.27],tags:["e","h"],url:"https://www.vegagerdin.is/"},
+  {id:31,name:"Höfn",reg:7,lat:64.252,lon:-15.212,imgs:null,wx:[64.25,-15.21],tags:["h","b"],url:"https://www.vegagerdin.is/"},
+  {id:32,name:"Egilsstaðir",reg:6,lat:65.270,lon:-14.394,imgs:null,wx:[65.27,-14.39],tags:["b"],url:"https://www.vegagerdin.is/"},
+  {id:33,name:"Seyðisfjörður",reg:6,lat:65.256,lon:-13.993,imgs:null,wx:[65.26,-13.99],tags:["b","h"],url:"https://www.vegagerdin.is/"},
+  {id:34,name:"Ísafjörður",reg:4,lat:66.075,lon:-23.135,imgs:null,wx:[66.08,-23.14],tags:["b","h"],url:"https://www.vegagerdin.is/"},
+  {id:35,name:"Skaftafell",reg:7,lat:63.998,lon:-16.968,imgs:null,wx:[64.00,-16.97],tags:["n","j"],url:"https://livefromiceland.is/"},
+  {id:36,name:"Þórsmörk",reg:8,lat:63.683,lon:-19.499,imgs:null,wx:[63.68,-19.50],tags:["n"],url:"https://livefromiceland.is/"},
+  {id:37,name:"Dalvík",reg:5,lat:65.970,lon:-18.527,imgs:null,wx:[65.97,-18.53],tags:["h"],url:"https://www.vegagerdin.is/"},
+  {id:38,name:"Siglufjörður",reg:5,lat:66.153,lon:-18.905,imgs:null,wx:[66.15,-18.91],tags:["h","b"],url:"https://www.vegagerdin.is/"},
+  {id:39,name:"Stykkishólmur",reg:3,lat:65.074,lon:-22.729,imgs:null,wx:[65.07,-22.73],tags:["h","b"],url:"https://www.vegagerdin.is/"},
+  {id:40,name:"Landmannalaugar",reg:8,lat:63.984,lon:-19.066,imgs:null,wx:[63.98,-19.07],tags:["n"],url:"https://livefromiceland.is/"},
 ];
-
 const TC={n:'#7ac848',e:'#e05a2b',j:'#70c8f0',b:'#daa520',r:'#c8b870',h:'#40a8d8'};
 const RC=['#c8a060','#a08040','#907040','#806030','#706028','#887830','#785a28','#685020','#786040'];
+const REGS=["All Regions","Capital Region","S. Peninsula","Western Iceland","Westfjords","North Iceland","East Iceland","SE Iceland","South Iceland"];
+const TAGS={n:'Nature',e:'Volcano',j:'Glacier',b:'City',r:'Road',h:'Harbour'};
 
-// ══ STATE ══════════════════════════════════════════════════
-let activeFilter='',activeReg=0,activeCam=null,favs=new Set(),wxCache={},rTmr=null,subIdx=0,camUrl='#',lbTmr=null,lbSubIdx=0;
-let geoProj=null,geoPath=null;
+// ═══ STATE ══════════════════════════════════════
+let aFilt='',aReg=0,aCam=null,favs=new Set(),wxC={},rTmr=null,sIdx=0,camUrl='#',lbTmr=null,lbIdx=0;
+let gProj=null,gPath=null;
 
-function getVis(){return CAMS.filter(c=>(!activeFilter||c.tags.includes(activeFilter))&&(activeReg===0||c.reg===activeReg));}
-function regName(r){return(t('regions')||[])[r]||''}
+function getV(){return CAMS.filter(c=>(!aFilt||c.tags.includes(aFilt))&&(aReg===0||c.reg===aReg));}
+function rName(r){return REGS[r]||'';}
 
-// ══ D3 MAP ═════════════════════════════════════════════════
+// ═══ LANGUAGE ═══════════════════════════════════
+const FLAGS={en:'<svg viewBox="0 0 60 40"><rect width="60" height="40" fill="#012169"/><path d="M0,0L60,40M60,0L0,40" stroke="#fff" stroke-width="8"/><path d="M0,0L60,40M60,0L0,40" stroke="#C8102E" stroke-width="5"/><path d="M30,0V40M0,20H60" stroke="#fff" stroke-width="13"/><path d="M30,0V40M0,20H60" stroke="#C8102E" stroke-width="8"/></svg>',is:'<svg viewBox="0 0 60 40"><rect width="60" height="40" fill="#003897"/><path d="M15,0V40M0,20H60" stroke="#fff" stroke-width="9"/><path d="M15,0V40M0,20H60" stroke="#d72828" stroke-width="5"/></svg>',de:'<svg viewBox="0 0 60 40"><rect width="60" height="40" fill="#FFCE00"/><rect width="60" height="27" fill="#DD0000"/><rect width="60" height="13" fill="#000"/></svg>',fr:'<svg viewBox="0 0 60 40"><rect width="60" height="40" fill="#ED2939"/><rect width="40" height="40" fill="#fff"/><rect width="20" height="40" fill="#002395"/></svg>',es:'<svg viewBox="0 0 60 40"><rect width="60" height="40" fill="#AA151B"/><rect y="10" width="60" height="20" fill="#F1BF00"/></svg>'};
+function bLangs(){
+  ['en','is','de','fr','es'].forEach(l=>{
+    [document.getElementById('langs'),document.getElementById('mlangs')].forEach((c,i)=>{
+      const b=document.createElement('button');b.className='lb'+(l==='en'?' on':'');b.dataset.l=l;
+      b.innerHTML=`<span class="flag">${FLAGS[l]}</span>${l.toUpperCase()}`;
+      if(i>0){b.style='font-size:12px;padding:6px 11px';}
+      b.onclick=()=>{document.querySelectorAll('.lb').forEach(x=>x.classList.toggle('on',x.dataset.l===l));if(i>0)cMob();};
+      c.appendChild(b);
+    });
+  });
+}
+function oMob(){document.getElementById('mob').style.display='flex';document.body.style.overflow='hidden';}
+function cMob(){document.getElementById('mob').style.display='none';document.body.style.overflow='';}
+
+// ═══ D3 MAP ════════════════════════════════════
 async function initMap(){
-  const wrap=document.getElementById('map-svg-wrap');
-  const topEl=document.getElementById('map-top');
-  const W=topEl.clientWidth||700,H=topEl.clientHeight||420;
-
+  const wrap=document.getElementById('map-wrap');
+  const topEl=document.getElementById('mtop');
+  const W=topEl.clientWidth||680, H=topEl.clientHeight||420;
   try{
-    // Load world atlas from cdnjs (approved CDN)
     const world=await d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json');
     const countries=topojson.feature(world,world.objects.countries);
     const iceland=countries.features.find(f=>+f.id===352);
-    if(!iceland) throw new Error('Iceland not found');
-
-    // Fit Mercator projection to Iceland with padding
-    geoProj=d3.geoMercator().fitExtent([[28,22],[W-32,H-36]],iceland);
-    geoPath=d3.geoPath().projection(geoProj);
-
-    const svg=d3.create('svg')
-      .attr('width','100%').attr('height','100%')
-      .attr('viewBox',`0 0 ${W} ${H}`)
-      .style('position','absolute').style('inset',0).style('overflow','visible');
-
-    // Defs
+    if(!iceland)throw new Error('Iceland not found in dataset');
+    gProj=d3.geoMercator().fitExtent([[24,18],[W-28,H-32]],iceland);
+    gPath=d3.geoPath().projection(gProj);
+    const svg=d3.create('svg').attr('width','100%').attr('height','100%').attr('viewBox',`0 0 ${W} ${H}`).style('position','absolute').style('inset',0).style('overflow','visible');
     const defs=svg.append('defs');
-    const lg=defs.append('radialGradient').attr('id','land-rg').attr('cx','40%').attr('cy','45%').attr('r','62%');
-    lg.append('stop').attr('offset','0%').attr('stop-color','#9a8050');
-    lg.append('stop').attr('offset','28%').attr('stop-color','#7a6035');
-    lg.append('stop').attr('offset','62%').attr('stop-color','#524022');
-    lg.append('stop').attr('offset','100%').attr('stop-color','#261606');
-
-    const gg=defs.append('linearGradient').attr('id','glac-rg').attr('x1',0).attr('y1',0).attr('x2','.15').attr('y2',1);
-    gg.append('stop').attr('offset','0%').attr('stop-color','#f0f8ff');
-    gg.append('stop').attr('offset','45%').attr('stop-color','#b8daf0');
-    gg.append('stop').attr('offset','100%').attr('stop-color','#70b0d8');
-
+    // Land gradient
+    const lg=defs.append('radialGradient').attr('id','lg').attr('cx','40%').attr('cy','45%').attr('r','62%');
+    [{o:'0%',c:'#9a8050'},{o:'28%',c:'#7a6035'},{o:'62%',c:'#524022'},{o:'100%',c:'#261606'}].forEach(s=>lg.append('stop').attr('offset',s.o).attr('stop-color',s.c));
+    // Glacier gradient
+    const gg=defs.append('linearGradient').attr('id','gg').attr('x1',0).attr('y1',0).attr('x2','.15').attr('y2',1);
+    [{o:'0%',c:'#f0f8ff'},{o:'45%',c:'#b8daf0'},{o:'100%',c:'#70b0d8'}].forEach(s=>gg.append('stop').attr('offset',s.o).attr('stop-color',s.c));
+    // Filters
     const shad=defs.append('filter').attr('id','ls');
     shad.append('feDropShadow').attr('dx',0).attr('dy',5).attr('stdDeviation',10).attr('flood-color','#000').attr('flood-opacity',.75);
-    const gGlow=defs.append('filter').attr('id','gg');
-    gGlow.append('feDropShadow').attr('dx',0).attr('dy',0).attr('stdDeviation',5).attr('flood-color','#80c8f0').attr('flood-opacity',.55);
-    const vGlow=defs.append('filter').attr('id','vg');
-    vGlow.append('feDropShadow').attr('dx',0).attr('dy',0).attr('stdDeviation',8).attr('flood-color','#e06020').attr('flood-opacity',.9);
-    const pGlow=defs.append('filter').attr('id','pg');
-    pGlow.append('feDropShadow').attr('dx',0).attr('dy',0).attr('stdDeviation',3).attr('flood-color','#daa520').attr('flood-opacity',.65);
-
+    const ggl=defs.append('filter').attr('id','ggl');
+    ggl.append('feDropShadow').attr('dx',0).attr('dy',0).attr('stdDeviation',6).attr('flood-color','#80c8f0').attr('flood-opacity',.6);
+    const vgl=defs.append('filter').attr('id','vgl');
+    vgl.append('feDropShadow').attr('dx',0).attr('dy',0).attr('stdDeviation',8).attr('flood-color','#e06020').attr('flood-opacity',.9);
+    const pgl=defs.append('filter').attr('id','pgl');
+    pgl.append('feDropShadow').attr('dx',0).attr('dy',0).attr('stdDeviation',3).attr('flood-color','#daa520').attr('flood-opacity',.65);
+    // Terrain pattern
     const terr=defs.append('pattern').attr('id','terr').attr('patternUnits','userSpaceOnUse').attr('width',5).attr('height',5).attr('patternTransform','rotate(35)');
     terr.append('line').attr('x1',0).attr('y1',0).attr('x2',0).attr('y2',5).attr('stroke','rgba(0,0,0,.09)').attr('stroke-width',.7);
-
-    const seaPat=defs.append('pattern').attr('id','sea-p').attr('patternUnits','userSpaceOnUse').attr('width',110).attr('height',40);
-    seaPat.append('path').attr('d','M0 20 Q27 9 55 20 Q83 31 110 20').attr('stroke','rgba(40,110,180,.065)').attr('stroke-width',1.3).attr('fill','none');
-
-    const corona=defs.append('radialGradient').attr('id','corona');
-    corona.append('stop').attr('offset','0%').attr('stop-color','rgba(218,165,32,.065)');
-    corona.append('stop').attr('offset','100%').attr('stop-color','rgba(218,165,32,0)');
-
-    // Sea background
-    svg.append('rect').attr('width',W).attr('height',H).attr('fill','url(#sea-p)');
-
-    // Iceland land — D3 draws the correct shape from real GeoJSON
-    svg.append('path').datum(iceland)
-      .attr('d',geoPath)
-      .attr('fill','url(#land-rg)')
-      .attr('filter','url(#ls)')
-      .attr('stroke','rgba(20,8,0,.88)')
-      .attr('stroke-width',1.4)
-      .attr('stroke-linejoin','round');
-
-    // Terrain texture
-    svg.append('path').datum(iceland)
-      .attr('d',geoPath)
-      .attr('fill','url(#terr)')
-      .attr('opacity',.22);
-
-    // Land corona glow
-    const [cx,cy]=[W/2,H/2];
-    svg.append('ellipse').attr('cx',cx).attr('cy',cy).attr('rx',W/2*.9).attr('ry',H/2*.9).attr('fill','url(#corona)').attr('opacity',.7);
-
-
-    // Glaciers — use d3.geoCircle() for accurate Mercator rendering
-    const geoCircle = d3.geoCircle();
-    const glaciers = [
-      {name:'Vatnajökull',  lon:-17.0, lat:64.42, radius:0.92, label:true},
-      {name:'Langjökull',   lon:-20.1, lat:64.68, radius:0.42, label:true},
-      {name:'Hofsjökull',   lon:-18.9, lat:64.82, radius:0.28, label:false},
-      {name:'Mýrdalsjökull',lon:-19.1, lat:63.72, radius:0.26, label:false},
-      {name:'Eyjafjallajökull',lon:-19.6,lat:63.64,radius:0.19,label:false},
-      {name:'Snæfellsjökull',lon:-23.77,lat:64.80,radius:0.16,label:false},
-      {name:'Drangajökull', lon:-22.2, lat:66.15, radius:0.22, label:false},
-    ];
-    glaciers.forEach(g => {
-      const circleFeature = geoCircle.center([g.lon, g.lat]).radius(g.radius)();
-      svg.append('path').datum(circleFeature)
-        .attr('d', geoPath)
-        .attr('fill', 'url(#glac-rg)')
-        .attr('stroke', '#88c0e2')
-        .attr('stroke-width', 0.9)
-        .attr('opacity', 0.93)
-        .attr('filter', 'url(#gg)');
-      if (g.label) {
-        const [lx, ly] = geoProj([g.lon, g.lat]);
-        svg.append('text')
-          .attr('x', lx).attr('y', ly + 4)
-          .attr('text-anchor', 'middle')
-          .attr('fill', 'rgba(10,35,55,.72)')
-          .attr('font-size', 9.5)
-          .attr('font-family', 'Crimson Text,serif')
-          .attr('font-style', 'italic')
-          .text(g.name);
-      }
+    // Sea pattern
+    const sea=defs.append('pattern').attr('id','sea').attr('patternUnits','userSpaceOnUse').attr('width',110).attr('height',40);
+    sea.append('path').attr('d','M0 20 Q27 9 55 20 Q83 31 110 20').attr('stroke','rgba(40,110,180,.065)').attr('stroke-width',1.3).attr('fill','none');
+    // Corona gradient
+    const cor=defs.append('radialGradient').attr('id','cor');
+    cor.append('stop').attr('offset','0%').attr('stop-color','rgba(218,165,32,.065)');
+    cor.append('stop').attr('offset','100%').attr('stop-color','rgba(218,165,32,0)');
+    // Sea bg
+    svg.append('rect').attr('width',W).attr('height',H).attr('fill','url(#sea)');
+    // Iceland land — D3 projects real GeoJSON
+    svg.append('path').datum(iceland).attr('d',gPath).attr('fill','url(#lg)').attr('filter','url(#ls)').attr('stroke','rgba(20,8,0,.88)').attr('stroke-width',1.4).attr('stroke-linejoin','round');
+    svg.append('path').datum(iceland).attr('d',gPath).attr('fill','url(#terr)').attr('opacity',.22);
+    // Corona glow
+    svg.append('ellipse').attr('cx',W/2).attr('cy',H/2).attr('rx',W*.45).attr('ry',H*.45).attr('fill','url(#cor)').attr('opacity',.7);
+    // Glaciers — geoCircle gives correct shape in Mercator
+    const gc=d3.geoCircle();
+    [{name:'Vatnajökull',lon:-17.0,lat:64.42,r:0.92,lbl:true},
+     {name:'Langjökull',lon:-20.1,lat:64.68,r:0.42,lbl:true},
+     {name:'Hofsjökull',lon:-18.9,lat:64.82,r:0.28,lbl:false},
+     {name:'Mýrdalsjökull',lon:-19.1,lat:63.72,r:0.26,lbl:false},
+     {name:'Eyjafjallajökull',lon:-19.6,lat:63.64,r:0.19,lbl:false},
+     {name:'Snæfellsjökull',lon:-23.77,lat:64.80,r:0.16,lbl:false},
+     {name:'Drangajökull',lon:-22.2,lat:66.15,r:0.22,lbl:false},
+    ].forEach(g=>{
+      svg.append('path').datum(gc.center([g.lon,g.lat]).radius(g.r)()).attr('d',gPath).attr('fill','url(#gg)').attr('stroke','#88c0e2').attr('stroke-width',.9).attr('opacity',.93).attr('filter','url(#ggl)');
+      if(g.lbl){const[lx,ly]=gProj([g.lon,g.lat]);svg.append('text').attr('x',lx).attr('y',ly+4).attr('text-anchor','middle').attr('fill','rgba(10,35,55,.72)').attr('font-size',9.5).attr('font-family','Crimson Text,serif').attr('font-style','italic').text(g.name);}
     });
-
     // Ring road
-    const ringCoords=[
-      [-22.0,63.83],[-21.5,63.80],[-20.9,63.72],[-19.95,63.62],[-19.0,63.42],
-      [-18.1,63.53],[-17.0,63.87],[-15.9,64.10],[-15.1,64.25],[-14.7,64.92],
-      [-13.95,65.07],[-13.72,65.45],[-13.78,65.72],[-14.29,65.88],[-15.1,66.09],
-      [-15.71,65.98],[-16.42,65.65],[-16.80,65.44],[-17.22,65.72],[-17.35,66.05],
-      [-18.03,66.18],[-18.70,66.35],[-18.94,66.44],[-19.14,66.36],[-19.46,66.22],
-      [-19.94,65.92],[-20.36,65.73],[-20.80,65.60],[-21.38,65.52],[-22.10,65.50],
-      [-22.51,65.50],[-23.00,65.44],[-23.25,65.37],[-23.56,65.23],[-23.83,65.07],
-      [-24.03,64.74],[-23.56,64.38],[-22.0,63.83]
-    ];
-    const ringFeature={type:'Feature',geometry:{type:'LineString',coordinates:ringCoords}};
-    svg.append('path').datum(ringFeature).attr('d',geoPath)
-      .attr('fill','none').attr('stroke','rgba(184,134,11,.28)').attr('stroke-width',1.7)
-      .attr('stroke-dasharray','5,4').attr('stroke-linecap','round');
-
+    const rr={type:'Feature',geometry:{type:'LineString',coordinates:[[-22.0,63.83],[-21.5,63.80],[-20.9,63.72],[-19.95,63.62],[-19.0,63.42],[-18.1,63.53],[-17.0,63.87],[-15.9,64.10],[-15.1,64.25],[-14.7,64.92],[-13.95,65.07],[-13.72,65.45],[-13.78,65.72],[-14.29,65.88],[-15.1,66.09],[-15.71,65.98],[-16.42,65.65],[-16.80,65.44],[-17.22,65.72],[-17.35,66.05],[-18.03,66.18],[-18.70,66.35],[-18.94,66.44],[-19.14,66.36],[-19.46,66.22],[-19.94,65.92],[-20.36,65.73],[-20.80,65.60],[-21.38,65.52],[-22.10,65.50],[-22.51,65.50],[-23.00,65.44],[-23.25,65.37],[-23.56,65.23],[-23.83,65.07],[-24.03,64.74],[-23.56,64.38],[-22.0,63.83]]}};
+    svg.append('path').datum(rr).attr('d',gPath).attr('fill','none').attr('stroke','rgba(184,134,11,.28)').attr('stroke-width',1.7).attr('stroke-dasharray','5,4').attr('stroke-linecap','round');
     // Hekla
-    const [hx,hy]=geoProj([-19.67,63.98]);
-    svg.append('polygon').attr('points',`${hx},${hy-14} ${hx+9},${hy+7} ${hx-9},${hy+7}`)
-      .attr('fill','#6a2008').attr('stroke','#e05820').attr('stroke-width',1.3).attr('filter','url(#vg)');
-    svg.append('text').attr('x',hx).attr('y',hy-18).attr('text-anchor','middle')
-      .attr('font-size',10).attr('fill','#e05820').attr('font-family','Cinzel,serif').attr('filter','url(#vg)').text('▲');
-    svg.append('text').attr('x',hx+17).attr('y',hy-15)
-      .attr('font-size',8).attr('fill','rgba(220,110,50,.8)').attr('font-family','Cinzel,serif').text('Hekla');
-
+    const[hx,hy]=gProj([-19.67,63.98]);
+    const hkg=svg.append('g').attr('filter','url(#vgl)');
+    hkg.append('polygon').attr('points',`${hx},${hy-13} ${hx+8},${hy+7} ${hx-8},${hy+7}`).attr('fill','#6a2008').attr('stroke','#e05820').attr('stroke-width',1.3);
+    hkg.append('text').attr('x',hx+16).attr('y',hy-12).attr('font-size',8).attr('fill','rgba(220,110,50,.8)').attr('font-family','Cinzel,serif').text('Hekla');
     // Labels
-    const labels=[
-      {text:'REYKJAVÍK',lon:-21.93,lat:64.02,size:10,op:.55},
-      {text:'AKUREYRI', lon:-18.11,lat:65.56,size:9.5,op:.48},
-      {text:'VESTFIRÐIR',lon:-23.2,lat:66.15,size:8.5,op:.40},
-      {text:'AUSTURLAND',lon:-14.5,lat:65.10,size:8.5,op:.38},
-      {text:'NORÐURLAND',lon:-18.5,lat:66.55,size:8,op:.36},
-      {text:'Atlantic Ocean',lon:-18.5,lat:63.0,size:10.5,op:.35,italic:true,sea:true},
-    ];
-    labels.forEach(l=>{
-      const [lx,ly]=geoProj([l.lon,l.lat]);
-      if(lx<0||lx>W||ly<0||ly>H) return;
-      svg.append('text').attr('x',lx).attr('y',ly).attr('text-anchor','middle')
-        .attr('font-size',l.size).attr('font-family',l.italic?'Crimson Text,serif':'Cinzel,serif')
-        .attr('font-style',l.italic?'italic':'normal')
-        .attr('fill',l.sea?`rgba(40,95,165,${l.op})`:`rgba(225,210,158,${l.op})`)
-        .attr('letter-spacing',l.italic?2:1)
-        .text(l.text);
+    [[−21.93,64.02,'REYKJAVÍK',10,.55],[−18.11,65.56,'AKUREYRI',9.5,.48],[−23.2,66.15,'VESTFIRÐIR',8.5,.4],[−14.5,65.10,'AUSTURLAND',8.5,.38],[−18.5,63.05,'Atlantic Ocean',10.5,.35,true]].forEach(([lon,lat,txt,sz,op,sea])=>{
+      const[lx,ly]=gProj([lon,lat]);
+      if(lx<0||lx>W||ly<0||ly>H)return;
+      svg.append('text').attr('x',lx).attr('y',ly).attr('text-anchor','middle').attr('font-size',sz).attr('font-family',sea?'Crimson Text,serif':'Cinzel,serif').attr('font-style',sea?'italic':'normal').attr('fill',sea?`rgba(40,95,165,${op})`:`rgba(225,210,158,${op})`).attr('letter-spacing',sea?2:1).text(txt);
     });
-
     // Compass
-    const comp=svg.append('g').attr('transform',`translate(${W-52},${H-52})`);
-    comp.append('circle').attr('r',26).attr('fill','rgba(2,1,8,.9)').attr('stroke','#b8860b').attr('stroke-width',1.3);
-    comp.append('circle').attr('r',20).attr('fill','none').attr('stroke','rgba(184,134,11,.22)').attr('stroke-width',.6);
-    [['0,-22','3,0','-3,0','#e06060'],['0,22','3,0','-3,0','#c8b060'],['-22,0','0,2.5','0,-2.5','#c8b060'],['22,0','0,2.5','0,-2.5','#c8b060']].forEach(([t1,t2,t3,c])=>{
-      comp.append('polygon').attr('points',`${t1} ${t2} ${t3}`).attr('fill',c);
-    });
-    comp.append('circle').attr('r',3.5).attr('fill','#b8860b');
-    comp.append('text').attr('y',-29).attr('text-anchor','middle').attr('font-size',7.5).attr('fill','#b8860b').attr('font-family','Cinzel,serif').text('N');
-
-    // Scale bar
-    const scaleG=svg.append('g').attr('transform',`translate(20,${H-28})`);
-    scaleG.append('line').attr('x1',0).attr('y1',0).attr('x2',88).attr('y2',0).attr('stroke','#b8860b').attr('stroke-width',1.3);
-    [[0,-4,0,4],[44,-2,44,2],[88,-4,88,4]].forEach(([x1,y1,x2,y2])=>{
-      scaleG.append('line').attr('x1',x1).attr('y1',y1).attr('x2',x2).attr('y2',y2).attr('stroke','#b8860b').attr('stroke-width',1.2);
-    });
-    scaleG.append('text').attr('x',44).attr('y',13).attr('text-anchor','middle').attr('fill','rgba(184,134,11,.58)').attr('font-size',8).attr('font-family','Crimson Text,serif').text('100 km');
-
+    const cmp=svg.append('g').attr('transform',`translate(${W-50},${H-50})`);
+    cmp.append('circle').attr('r',26).attr('fill','rgba(2,1,8,.9)').attr('stroke','#b8860b').attr('stroke-width',1.3);
+    cmp.append('circle').attr('r',20).attr('fill','none').attr('stroke','rgba(184,134,11,.22)').attr('stroke-width',.6);
+    [['0,-20','3,0','-3,0','#e06060'],['0,20','3,0','-3,0','#c8b060'],['-20,0','0,2.5','0,-2.5','#c8b060'],['20,0','0,2.5','0,-2.5','#c8b060']].forEach(([p1,p2,p3,c])=>cmp.append('polygon').attr('points',`${p1} ${p2} ${p3}`).attr('fill',c));
+    cmp.append('circle').attr('r',3.5).attr('fill','#b8860b');
+    cmp.append('text').attr('y',-28).attr('text-anchor','middle').attr('font-size',7.5).attr('fill','#b8860b').attr('font-family','Cinzel,serif').text('N');
+    // Scale
+    const sc=svg.append('g').attr('transform',`translate(20,${H-26})`);
+    sc.append('line').attr('x1',0).attr('y1',0).attr('x2',86).attr('y2',0).attr('stroke','#b8860b').attr('stroke-width',1.3);
+    [[0,-3.5,0,3.5],[43,-2,43,2],[86,-3.5,86,3.5]].forEach(([x1,y1,x2,y2])=>sc.append('line').attr('x1',x1).attr('y1',y1).attr('x2',x2).attr('y2',y2).attr('stroke','#b8860b').attr('stroke-width',1.2));
+    sc.append('text').attr('x',43).attr('y',13).attr('text-anchor','middle').attr('fill','rgba(184,134,11,.58)').attr('font-size',8).attr('font-family','Crimson Text,serif').text('100 km');
     // Pins group
     svg.append('g').attr('id','pins-g');
-
     wrap.appendChild(svg.node());
-    document.getElementById('map-loading').style.display='none';
-    renderPins();
-
+    document.getElementById('mload').style.display='none';
+    rPins();
   }catch(err){
-    console.error('Map error:',err);
-    document.getElementById('map-loading').innerHTML=`<span style="color:var(--parch3);font-size:11px">Map unavailable. Please refresh.</span>`;
+    console.error('Map failed:',err);
+    document.getElementById('mload').innerHTML='<span style="color:var(--parch3);font-size:10px">Map unavailable — please refresh</span>';
   }
 }
-
-// ══ PINS ═══════════════════════════════════════════════════
-function renderPins(){
+// ═══ PINS ═══════════════════════════════════════
+function rPins(){
   const g=document.getElementById('pins-g');
-  if(!g||!geoProj) return;
-  while(g.firstChild) g.removeChild(g.firstChild);
+  if(!g||!gProj)return;
+  while(g.firstChild)g.removeChild(g.firstChild);
   const ns='http://www.w3.org/2000/svg';
-  const vis=new Set(getVis().map(c=>c.id));
-
+  const vis=new Set(getV().map(c=>c.id));
   CAMS.forEach(cam=>{
-    const [px,py]=geoProj([cam.lon,cam.lat]);
+    const[px,py]=gProj([cam.lon,cam.lat]);
     const col=TC[cam.tags[0]]||'#c8b870';
-    const on=activeCam&&activeCam.id===cam.id;
-    const isVis=vis.has(cam.id);
-
-    const grp=document.createElementNS(ns,'g');
-    grp.setAttribute('transform',`translate(${px.toFixed(1)},${py.toFixed(1)})`);
-    grp.setAttribute('opacity',isVis?'1':'0.18');
-    grp.style.cursor='pointer';
-
-    if(isVis){
-      const pulse=document.createElementNS(ns,'circle');
-      pulse.setAttribute('r','8');
-      pulse.setAttribute('fill',on?'rgba(176,32,32,.22)':'rgba(218,165,32,.1)');
-      pulse.setAttribute('stroke',on?'rgba(176,32,32,.4)':'rgba(218,165,32,.25)');
-      pulse.setAttribute('stroke-width','0.8');
-      pulse.setAttribute('class','pin-pulse');
-      grp.appendChild(pulse);
-    }
-    const outer=document.createElementNS(ns,'circle');
-    outer.setAttribute('r','9');outer.setAttribute('fill',on?'rgba(176,32,32,.18)':'rgba(218,165,32,.08)');outer.setAttribute('stroke',on?'rgba(176,32,32,.45)':'rgba(218,165,32,.22)');outer.setAttribute('stroke-width','0.9');
-    grp.appendChild(outer);
-    const inner=document.createElementNS(ns,'circle');
-    inner.setAttribute('r','5');inner.setAttribute('fill',on?'#a01818':'rgba(4,2,12,.92)');inner.setAttribute('stroke',on?'#f09090':col);inner.setAttribute('stroke-width','1.2');
-    if(isVis) inner.setAttribute('filter','url(#pg)');
-    grp.appendChild(inner);
-    const dot=document.createElementNS(ns,'circle');
-    dot.setAttribute('r','1.8');dot.setAttribute('fill',col);grp.appendChild(dot);
-
-    grp.addEventListener('mouseenter',e=>showTip(e,cam));
-    grp.addEventListener('mousemove',moveTip);
-    grp.addEventListener('mouseleave',hideTip);
-    grp.addEventListener('click',()=>{selectCam(cam);openLB(cam);});
-    g.appendChild(grp);
+    const on=aCam&&aCam.id===cam.id;
+    const isV=vis.has(cam.id);
+    const g2=document.createElementNS(ns,'g');
+    g2.setAttribute('transform',`translate(${px.toFixed(1)},${py.toFixed(1)})`);
+    g2.setAttribute('opacity',isV?'1':'0.18');
+    g2.style.cursor='pointer';
+    if(isV){const pl=document.createElementNS(ns,'circle');pl.setAttribute('r','8');pl.setAttribute('fill',on?'rgba(176,32,32,.2)':'rgba(218,165,32,.1)');pl.setAttribute('stroke',on?'rgba(176,32,32,.38)':'rgba(218,165,32,.22)');pl.setAttribute('stroke-width','0.8');pl.setAttribute('class','pp');g2.appendChild(pl);}
+    const o=document.createElementNS(ns,'circle');o.setAttribute('r','9');o.setAttribute('fill',on?'rgba(176,32,32,.16)':'rgba(218,165,32,.07)');o.setAttribute('stroke',on?'rgba(176,32,32,.4)':'rgba(218,165,32,.2)');o.setAttribute('stroke-width','0.8');g2.appendChild(o);
+    const i=document.createElementNS(ns,'circle');i.setAttribute('r','5');i.setAttribute('fill',on?'#a01818':'rgba(4,2,12,.92)');i.setAttribute('stroke',on?'#f09090':col);i.setAttribute('stroke-width','1.2');if(isV)i.setAttribute('filter','url(#pgl)');g2.appendChild(i);
+    const d=document.createElementNS(ns,'circle');d.setAttribute('r','1.8');d.setAttribute('fill',col);g2.appendChild(d);
+    g2.addEventListener('mouseenter',e=>sTip(e,cam));
+    g2.addEventListener('mousemove',mTip);
+    g2.addEventListener('mouseleave',hTip);
+    g2.addEventListener('click',()=>{sCam(cam);oLB(cam);});
+    g.appendChild(g2);
   });
 }
-
-// ══ CAM LIST ═══════════════════════════════════════════════
-function renderList(){
-  const list=document.getElementById('cam-list');list.innerHTML='';
-  getVis().slice(0,15).forEach(cam=>{
-    const d=document.createElement('div');d.className='ci'+(activeCam&&activeCam.id===cam.id?' on':'');d.id='ci-'+cam.id;
-    const img=document.createElement('img');img.className='ci-thumb';
-    img.src=cam.imgs?camUrl(cam.imgs[0], 1):`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='46' height='32'%3E%3Crect width='100%25' height='100%25' fill='%230a0a20'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' fill='%23b8860b' font-size='13' dominant-baseline='middle'%3E⊙%3C/text%3E%3C/svg%3E`;
-    if(cam.imgs)img.onerror=()=>{img.src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='46' height='32'%3E%3Crect width='100%25' height='100%25' fill='%230a0a20'/%3E%3C/svg%3E"};
+// ═══ CAM LIST ═══════════════════════════════════
+function rList(){
+  const list=document.getElementById('clist');list.innerHTML='';
+  getV().slice(0,15).forEach(cam=>{
+    const d=document.createElement('div');d.className='ci'+(aCam&&aCam.id===cam.id?' on':'');d.id='ci'+cam.id;
+    const img=document.createElement('img');img.className='cth';
+    img.src=cam.imgs?cU(cam.imgs[0],1):`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='30'%3E%3Crect width='100%25' height='100%25' fill='%230a0a20'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' fill='%23b8860b' font-size='13' dominant-baseline='middle'%3E⊙%3C/text%3E%3C/svg%3E`;
+    img.onerror=()=>{if(cam.imgs)img.src=cUD(cam.imgs[0],1);};
     d.appendChild(img);
-    const info=document.createElement('div');info.style='flex:1;min-width:0';
-    info.innerHTML=`<div class="ci-name">${cam.name}</div><div class="ci-loc">${regName(cam.reg)}</div>`;
-    d.appendChild(info);
-    const fav=document.createElement('button');fav.className='ci-fav'+(favs.has(cam.id)?' on':'');fav.textContent=favs.has(cam.id)?'★':'☆';
-    fav.onclick=e=>{e.stopPropagation();toggleFavCam(cam.id,fav);};d.appendChild(fav);
-    d.onclick=()=>{selectCam(cam);openLB(cam);};
+    const inf=document.createElement('div');inf.style='flex:1;min-width:0';inf.innerHTML=`<div class="cn">${cam.name}</div><div class="cl">${rName(cam.reg)}</div>`;d.appendChild(inf);
+    const fav=document.createElement('button');fav.className='cfav'+(favs.has(cam.id)?' on':'');fav.textContent=favs.has(cam.id)?'★':'☆';
+    fav.onclick=e=>{e.stopPropagation();tFavC(cam.id,fav);};d.appendChild(fav);
+    d.onclick=()=>{sCam(cam);oLB(cam);};
     list.appendChild(d);
   });
 }
-
-function buildFilters(){
+function bFilts(){
   const row=document.getElementById('frow');row.innerHTML='';
-  const fs=t('filters'),keys=['','n','e','j','b','r'];
-  keys.forEach((k,i)=>{
-    const btn=document.createElement('button');btn.className='fb'+(k===activeFilter?' on':'');btn.textContent=fs[i]||k;
-    btn.onclick=()=>{activeFilter=k;document.querySelectorAll('.fb').forEach(b=>b.classList.toggle('on',b===btn));renderPins();renderList();renderGrid();};
-    row.appendChild(btn);
+  ['All','Nature','Volcano','Glacier','City','Road'].forEach((lbl,i)=>{
+    const k=['','n','e','j','b','r'][i];
+    const b=document.createElement('button');b.className='fb'+(k===aFilt?' on':'');b.textContent=lbl;
+    b.onclick=()=>{aFilt=k;document.querySelectorAll('.fb').forEach(x=>x.classList.toggle('on',x===b));rPins();rList();rGrid();};
+    row.appendChild(b);
   });
 }
-
-function renderRegions(){
-  const list=document.getElementById('reg-list');list.innerHTML='';
-  (t('regions')||[]).forEach((name,i)=>{
-    const d=document.createElement('div');d.className='ri'+(i===0?' all':'')+(activeReg===i?' on':'');
-    d.innerHTML=`<span class="ri-dot" style="background:${RC[i]||'#888'}"></span>${name}`;
-    d.onclick=()=>{activeReg=i;document.querySelectorAll('.ri').forEach(el=>el.classList.remove('on'));d.classList.add('on');renderPins();renderList();renderGrid();};
+function rRegs(){
+  const list=document.getElementById('reglist');list.innerHTML='';
+  REGS.forEach((name,i)=>{
+    const d=document.createElement('div');d.className='ri'+(i===0?' all':'')+(aReg===i?' on':'');
+    d.innerHTML=`<span class="ridot" style="background:${RC[i]||'#888'}"></span>${name}`;
+    d.onclick=()=>{aReg=i;document.querySelectorAll('.ri').forEach(x=>x.classList.remove('on'));d.classList.add('on');rPins();rList();rGrid();};
     list.appendChild(d);
   });
 }
-
-function renderGrid(){
-  const grid=document.getElementById('wc-grid');grid.innerHTML='';
-  const tagLabels={n:'Nature',e:'Volcano',j:'Glacier',b:'City',r:'Road',h:'Harbour'};
-  getVis().forEach(cam=>{
-    const card=document.createElement('div');card.className='wc-card';
-    const imgWrap=document.createElement('div');imgWrap.className='wc-img-wrap';
-    const img=document.createElement('img');img.className='wc-img';img.loading='lazy';
-    img.src=cam.imgs?camUrl(cam.imgs[0], 1):`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='270' height='165'%3E%3Crect width='100%25' height='100%25' fill='%23050310'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%23b8860b' font-size='22'%3E⊙%3C/text%3E%3C/svg%3E`;
-    if(cam.imgs)img.onerror=()=>{img.src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='270' height='165'%3E%3Crect width='100%25' height='100%25' fill='%23050310'/%3E%3C/svg%3E"};
-    imgWrap.appendChild(img);
-    imgWrap.innerHTML+=`<div class="wc-badge"><span class="wc-dot"></span>LIVE</div><div class="wc-tag tag-${cam.tags[0]}">${tagLabels[cam.tags[0]]||''}</div>`;
-    imgWrap.prepend(img);card.appendChild(imgWrap);
-    card.innerHTML+=`<div class="wc-body"><div class="wc-name">${cam.name}</div><div class="wc-region">${regName(cam.reg)}</div></div>`;
-    card.onclick=()=>{selectCam(cam);openLB(cam);};
+function rGrid(){
+  const grid=document.getElementById('wcg');grid.innerHTML='';
+  getV().forEach(cam=>{
+    const card=document.createElement('div');card.className='wcc';
+    const iw=document.createElement('div');iw.className='wcw';
+    const img=document.createElement('img');img.className='wci';img.loading='lazy';
+    img.src=cam.imgs?cU(cam.imgs[0],1):`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='265' height='162'%3E%3Crect width='100%25' height='100%25' fill='%23050310'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%23b8860b' font-size='20'%3E⊙%3C/text%3E%3C/svg%3E`;
+    img.onerror=()=>{if(cam.imgs)img.src=cUD(cam.imgs[0],1);};
+    iw.appendChild(img);
+    iw.innerHTML+=`<div class="wcbad"><span class="wcdot"></span>LIVE</div><div class="wctag t${cam.tags[0]}">${TAGS[cam.tags[0]]||''}</div>`;
+    iw.prepend(img);card.appendChild(iw);
+    card.innerHTML+=`<div class="wcb"><div class="wcn">${cam.name}</div><div class="wcreg">${rName(cam.reg)}</div></div>`;
+    card.onclick=()=>{sCam(cam);oLB(cam);};
     grid.appendChild(card);
   });
 }
-
-// ══ SELECT CAM ═════════════════════════════════════════════
-function selectCam(cam){
-  activeCam=cam;camUrl=cam.url||'#';subIdx=0;clearInterval(rTmr);
-  renderPins();renderList();
-  document.getElementById('lp-name').textContent=cam.name;
-  document.getElementById('lp-region').textContent=regName(cam.reg);
-  const mi=document.getElementById('live-img');
-  const sw=document.getElementById('lp-subs');sw.innerHTML='';
+// ═══ SELECT CAM ════════════════════════════════
+function sCam(cam){
+  aCam=cam;camUrl=cam.url||'#';sIdx=0;clearInterval(rTmr);
+  rPins();rList();
+  document.getElementById('lnam').textContent=cam.name;
+  document.getElementById('lreg').textContent=rName(cam.reg);
+  const mi=document.getElementById('limg');
+  const sw=document.getElementById('lsubs');sw.innerHTML='';
   if(cam.imgs){
     const[sl,ct]=cam.imgs;
-    const urls=Array.from({length:ct},(_,i)=>camUrl(sl,i+1));
-    loadImg(mi,urls[0]);
+    const urls=Array.from({length:ct},(_,i)=>cU(sl,i+1));
+    lImg(mi,urls[0],sl,1);
     urls.slice(0,3).forEach((url,i)=>{
-      const s=document.createElement('img');s.className='lp-sub'+(i===0?' on':'');
-      s.src=url;s.onerror=()=>{s.style.opacity='.1';};
-      s.onclick=()=>{subIdx=i;loadImg(mi,url);document.querySelectorAll('.lp-sub').forEach(x=>x.classList.remove('on'));s.classList.add('on');};
+      const s=document.createElement('img');s.className='lsub'+(i===0?' on':'');
+      s.src=cU(sl,i+1);s.onerror=()=>{s.src=cUD(sl,i+1);};
+      s.onclick=()=>{sIdx=i;lImg(mi,url,sl,i+1);document.querySelectorAll('.lsub').forEach(x=>x.classList.remove('on'));s.classList.add('on');};
       sw.appendChild(s);
     });
-    rTmr=setInterval(()=>{const ts='?t='+Date.now();loadImg(mi,camUrl(sl,subIdx+1));document.querySelectorAll('.lp-sub').forEach((s,i)=>{s.src=camUrl(sl,i+1);});},30000);
+    rTmr=setInterval(()=>{lImg(mi,cU(sl,sIdx+1),sl,sIdx+1);document.querySelectorAll('.lsub').forEach((s,i)=>{s.src=cU(sl,i+1);s.onerror=()=>{s.src=cUD(sl,i+1);};});},30000);
   } else {
-    mi.src=`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='285' height='188'%3E%3Crect width='100%25' height='100%25' fill='%2303020e'/%3E%3Ctext x='50%25' y='40%25' text-anchor='middle' fill='%23b8860b' font-size='20' dominant-baseline='middle'%3E⊙%3C/text%3E%3Ctext x='50%25' y='62%25' text-anchor='middle' fill='%23c8a860' font-size='10' font-family='serif' dominant-baseline='middle'%3EClick VIEW WEBCAM to open%3C/text%3E%3C/svg%3E`;
+    mi.src=`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='186'%3E%3Crect width='100%25' height='100%25' fill='%2303020e'/%3E%3Ctext x='50%25' y='42%25' text-anchor='middle' fill='%23b8860b' font-size='18' dominant-baseline='middle'%3E⊙%3C/text%3E%3Ctext x='50%25' y='62%25' text-anchor='middle' fill='%23c8a860' font-size='10' font-family='serif' dominant-baseline='middle'%3EClick VIEW WEBCAM%3C/text%3E%3C/svg%3E`;
   }
-  fetchWx(cam.wx);
-  const ci=document.getElementById('ci-'+cam.id);if(ci){ci.classList.add('on');ci.scrollIntoView({block:'nearest'});}
+  fWx(cam.wx);
+  const ci=document.getElementById('ci'+cam.id);if(ci){ci.scrollIntoView({block:'nearest'});}
 }
-function loadImg(el,url){
+function lImg(el,url,slug,n){
   el.style.opacity='.35';
   const tmp=new Image();
   tmp.onload=()=>{el.src=url;el.style.opacity='1';};
   tmp.onerror=()=>{
-    el.style.opacity='.15';
-    // Try without cache buster
-    const baseUrl=url.split('?')[0];
-    if(url!==baseUrl){const tmp2=new Image();tmp2.onload=()=>{el.src=baseUrl;el.style.opacity='1';};tmp2.src=baseUrl;}
+    if(url.startsWith('/api/')){const du=cUD(slug,n);const t2=new Image();t2.onload=()=>{el.src=du;el.style.opacity='1';};t2.onerror=()=>{el.style.opacity='.2';};t2.src=du;}
+    else el.style.opacity='.2';
   };
   tmp.src=url;
 }
-function openCamLink(){if(camUrl&&camUrl!='#')window.open(camUrl,'_blank');}
-function toggleFav(){if(activeCam)toggleFavCam(activeCam.id,document.getElementById('fav-btn'));}
-function toggleFavCam(id,btn){if(favs.has(id)){favs.delete(id);if(btn){btn.textContent='☆';btn.classList.remove('on');}}else{favs.add(id);if(btn){btn.textContent='★';btn.classList.add('on');}}renderList();}
-
-// ══ WEATHER — Open-Meteo ═══════════════════════════════════
-const WMO={0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Fog',48:'Icy fog',51:'Light drizzle',53:'Drizzle',55:'Heavy drizzle',61:'Light rain',63:'Rain',65:'Heavy rain',71:'Light snow',73:'Snow',75:'Heavy snow',77:'Snow grains',80:'Rain showers',81:'Rain showers',82:'Heavy showers',85:'Snow showers',86:'Heavy snow showers',95:'Thunderstorm',96:'Thunderstorm/hail',99:'Thunderstorm/hail'};
-function degToDir(d){return['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'][Math.round(d/22.5)%16];}
-function wxIcon(code,temp){if(code<=1)return'☀️';if(code<=3)return'⛅';if(code<=48)return'🌫️';if(code<=67)return'🌧️';if(code<=77)return'❄️';if(code<=82)return'🌦️';if(code<=86)return'🌨️';return'⛈️';}
-
-async function fetchWx(coords){
-  if(!coords) return;
-  const key=coords.join(',');
-  if(wxCache[key]){applyWx(wxCache[key]);return;}
+function oCamLink(){if(camUrl&&camUrl!='#')window.open(camUrl,'_blank');}
+function tFav(){if(aCam)tFavC(aCam.id,document.getElementById('favbtn'));}
+function tFavC(id,btn){if(favs.has(id)){favs.delete(id);if(btn){btn.textContent='☆';btn.classList.remove('on');}}else{favs.add(id);if(btn){btn.textContent='★';btn.classList.add('on');}}rList();}
+// ═══ WEATHER ════════════════════════════════════
+const WMO={0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Fog',48:'Icy fog',51:'Light drizzle',53:'Drizzle',55:'Heavy drizzle',61:'Light rain',63:'Rain',65:'Heavy rain',71:'Light snow',73:'Snow',75:'Heavy snow',80:'Rain showers',81:'Rain showers',82:'Heavy showers',85:'Snow showers',86:'Heavy snow showers',95:'Thunderstorm'};
+function dDir(d){return['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'][Math.round(d/22.5)%16];}
+function wIco(c){if(c<=1)return'☀️';if(c<=3)return'⛅';if(c<=48)return'🌫️';if(c<=67)return'🌧️';if(c<=77)return'❄️';if(c<=82)return'🌦️';return'⛈️';}
+async function fWx(coords){
+  if(!coords)return;
+  const k=coords.join(',');
+  if(wxC[k]){aWx(wxC[k]);return;}
   const[lat,lon]=coords;
   const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,relative_humidity_2m,surface_pressure,weather_code&wind_speed_unit=ms&timezone=Atlantic%2FReykjavik`;
   try{
     const r=await fetch(url);
-    if(!r.ok) throw new Error(`HTTP ${r.status}`);
+    if(!r.ok)throw new Error(r.status);
     const d=await r.json();
-    if(!d.current) throw new Error('No current data');
+    if(!d.current)throw new Error('no data');
     const c=d.current;
-    const wx={
-      T:Math.round(c.temperature_2m*10)/10,
-      F:Math.round(c.wind_speed_10m*10)/10,
-      FG:Math.round(c.wind_speed_10m*1.3*10)/10,
-      D:degToDir(c.wind_direction_10m),
-      RH:Math.round(c.relative_humidity_2m),
-      P:Math.round(c.surface_pressure),
-      W:WMO[c.weather_code]||'Unknown',
-      code:c.weather_code,
-    };
-    wxCache[key]=wx;
-    applyWx(wx);
-  }catch(e){console.warn('Weather error:',e);}
+    const wx={T:Math.round(c.temperature_2m*10)/10,F:Math.round(c.wind_speed_10m*10)/10,FG:Math.round(c.wind_speed_10m*1.3*10)/10,D:dDir(c.wind_direction_10m),RH:Math.round(c.relative_humidity_2m),P:Math.round(c.surface_pressure),W:WMO[c.weather_code]||'Variable',code:c.weather_code};
+    wxC[k]=wx;aWx(wx);
+  }catch(e){console.warn('Weather:',e);}
 }
-
-function applyWx(wx){
-  document.getElementById('wx-temp').textContent=wx.T+'°C';
-  document.getElementById('lp-temp').textContent=wx.T+'°C';
-  document.getElementById('wx-wind').textContent=wx.F+' m/s';
-  document.getElementById('wx-gust').textContent=wx.FG+' m/s';
-  document.getElementById('wx-humid').textContent=wx.RH+'%';
-  document.getElementById('wx-press').textContent=wx.P+' hPa';
-  document.getElementById('wx-desc').textContent=wx.W;
-  document.getElementById('wx-icon').textContent=wxIcon(wx.code,wx.T);
-  document.getElementById('lp-wind').textContent=wx.F+' m/s';
-  document.getElementById('lp-dir').textContent=wx.D;
+function aWx(wx){
+  document.getElementById('wxtemp').textContent=wx.T+'°C';
+  document.getElementById('ltemp').textContent=wx.T+'°C';
+  document.getElementById('wxwind').textContent=wx.F+' m/s';
+  document.getElementById('wxgust').textContent=wx.FG+' m/s';
+  document.getElementById('wxhumid').textContent=wx.RH+'%';
+  document.getElementById('wxpress').textContent=wx.P+' hPa';
+  document.getElementById('wxdesc').textContent=wx.W;
+  document.getElementById('wxicon').textContent=wIco(wx.code);
+  document.getElementById('lwind').textContent=wx.F+' m/s';
+  document.getElementById('ldir').textContent=wx.D;
 }
-
-// ══ LIGHTBOX ═══════════════════════════════════════════════
-function openLB(cam){
-  const lb=document.getElementById('lightbox');
-  lb.classList.add('open');document.body.style.overflow='hidden';
-  document.getElementById('lb-name').textContent=cam.name;
-  document.getElementById('lb-region-lb').textContent=regName(cam.reg);
-  document.getElementById('lb-no-name').textContent=cam.name;
-  document.getElementById('t-lb-no-p').textContent=t('lb-no-p');
-  document.getElementById('t-lb-open').textContent=t('lb-open');
-
-  const lbImg=document.getElementById('lb-img');
-  const lbNo=document.getElementById('lb-no');
-  const lbSubs=document.getElementById('lb-subs');
-  lbSubs.innerHTML='';clearInterval(lbTmr);lbSubIdx=0;
-
+// ═══ LIGHTBOX ═══════════════════════════════════
+function oLB(cam){
+  document.getElementById('lb').classList.add('open');
+  document.body.style.overflow='hidden';
+  document.getElementById('lbnam').textContent=cam.name;
+  document.getElementById('lbreg').textContent=rName(cam.reg);
+  document.getElementById('lbnonam').textContent=cam.name;
+  const lbImg=document.getElementById('lbimg');
+  const lbNo=document.getElementById('lbno');
+  const lbSubs=document.getElementById('lbsubs');
+  lbSubs.innerHTML='';clearInterval(lbTmr);lbIdx=0;document.getElementById('lbwx').innerHTML='';
   if(cam.imgs){
     lbImg.style.display='block';lbNo.style.display='none';
     const[sl,ct]=cam.imgs;
-    const urls=Array.from({length:ct},(_,i)=>camUrl(sl,i+1));
-    loadLbImg(lbImg,urls[0]);
-    urls.forEach((url,i)=>{
-      const s=document.createElement('img');s.className='lb-sub'+(i===0?' on':'');
-      s.src=url;s.onerror=()=>{s.style.opacity='.1';};
-      s.onclick=()=>{lbSubIdx=i;loadLbImg(lbImg,url);document.querySelectorAll('.lb-sub').forEach(x=>x.classList.remove('on'));s.classList.add('on');};
+    lLBImg(lbImg,cU(sl,1),sl,1);
+    Array.from({length:ct},(_,i)=>{
+      const s=document.createElement('img');s.className='lbsub'+(i===0?' on':'');
+      s.src=cU(sl,i+1);s.onerror=()=>{s.src=cUD(sl,i+1);};
+      s.onclick=()=>{lbIdx=i;lLBImg(lbImg,cU(sl,i+1),sl,i+1);document.querySelectorAll('.lbsub').forEach(x=>x.classList.remove('on'));s.classList.add('on');};
       lbSubs.appendChild(s);
     });
-    let cd=30;
-    const ref=document.getElementById('lb-refresh');
-    ref.textContent=`Auto-refresh in ${cd}s`;
-    lbTmr=setInterval(()=>{cd--;if(cd<=0){cd=30;const ts='?t='+Date.now();loadLbImg(lbImg,camUrl(sl,lbSubIdx+1));document.querySelectorAll('.lb-sub').forEach((s,i)=>{s.src=camUrl(sl,i+1);});}ref.textContent=`Auto-refresh in ${cd}s`;},1000);
+    let cd=30;const ref=document.getElementById('lbref');ref.textContent='Auto-refresh in '+cd+'s';
+    lbTmr=setInterval(()=>{cd--;if(cd<=0){cd=30;lLBImg(lbImg,cU(sl,lbIdx+1),sl,lbIdx+1);document.querySelectorAll('.lbsub').forEach((s,i)=>{s.src=cU(sl,i+1);s.onerror=()=>{s.src=cUD(sl,i+1);};});}ref.textContent='Auto-refresh in '+cd+'s';},1000);
   } else {
     lbImg.style.display='none';lbNo.style.display='block';
-    document.getElementById('lb-ext').href=cam.url||'#';
-    document.getElementById('lb-refresh').textContent='';
+    document.getElementById('lbext').href=cam.url||'#';
+    document.getElementById('lbref').textContent='';
   }
-  // Fetch weather for lightbox
-  document.getElementById('lb-wx').innerHTML='';
-  fetchWx(cam.wx).then(()=>{
-    const key=(cam.wx||[]).join(',');
-    const wx=wxCache[key];
-    if(wx){
-      document.getElementById('lb-wx').innerHTML=`<span>🌡️ ${wx.T}°C</span><span>💨 ${wx.F} m/s ${wx.D}</span>`;
-      // Also update main weather panel
-      applyWx(wx);
-    }
+  // Weather in header
+  fWx(cam.wx).then?.(()=>{
+    const wx=wxC[(cam.wx||[]).join(',')];
+    if(wx)document.getElementById('lbwx').innerHTML=`<span>🌡️ ${wx.T}°C</span><span>💨 ${wx.F} m/s ${wx.D}</span>`;
   });
 }
-function loadLbImg(el, url) {
-  el.style.opacity = '.35';
-  const tmp = new Image();
-  tmp.onload = () => { el.src = url; el.style.opacity = '1'; };
-  tmp.onerror = () => {
-    // Proxy failed — try direct URL as fallback
-    if (url.startsWith('/api/') && activeCam && activeCam.imgs) {
-      const [sl, ct] = activeCam.imgs;
-      const directUrl = camUrlDirect(sl, lbSubIdx + 1);
-      const tmp2 = new Image();
-      tmp2.onload = () => { el.src = directUrl; el.style.opacity = '1'; };
-      tmp2.onerror = () => {
-        // Both failed — show external link panel
-        el.style.display = 'none';
-        document.getElementById('lb-no').style.display = 'block';
-        if (activeCam) document.getElementById('lb-ext').href = activeCam.url || '#';
-      };
-      tmp2.src = directUrl;
-    } else {
-      el.style.display = 'none';
-      document.getElementById('lb-no').style.display = 'block';
-      if (activeCam) document.getElementById('lb-ext').href = activeCam.url || '#';
-    }
+function lLBImg(el,url,slug,n){
+  el.style.opacity='.35';
+  const tmp=new Image();
+  tmp.onload=()=>{el.src=url;el.style.opacity='1';};
+  tmp.onerror=()=>{
+    if(url.startsWith('/api/')){const du=cUD(slug,n);const t2=new Image();t2.onload=()=>{el.src=du;el.style.opacity='1';};t2.onerror=()=>{el.style.display='none';document.getElementById('lbno').style.display='block';if(aCam)document.getElementById('lbext').href=aCam.url||'#';};t2.src=du;}
+    else{el.style.display='none';document.getElementById('lbno').style.display='block';if(aCam)document.getElementById('lbext').href=aCam.url||'#';}
   };
-  tmp.src = url;
+  tmp.src=url;
 }
-function closeLB(){document.getElementById('lightbox').classList.remove('open');document.body.style.overflow='';clearInterval(lbTmr);}
-document.getElementById('lightbox').addEventListener('click',function(e){if(e.target===this)closeLB();});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLB();});
-
-// ══ TOOLTIP ════════════════════════════════════════════════
-const tipEl=document.getElementById('map-tip');
-const mapTopEl=document.getElementById('map-top');
-function showTip(e,cam){tipEl.innerHTML=`<b style="font-family:Cinzel,serif;color:#daa520;font-size:11px">${cam.name}</b><br><span style="color:#c8a060;font-size:10px">${regName(cam.reg)}</span>`;tipEl.style.display='block';moveTip(e);}
-function moveTip(e){const r=mapTopEl.getBoundingClientRect();let tx=e.clientX-r.left+11,ty=e.clientY-r.top-10;if(tx+175>r.width)tx=e.clientX-r.left-175;tipEl.style.left=tx+'px';tipEl.style.top=ty+'px';}
-function hideTip(){tipEl.style.display='none';}
-
-// ══ STAR PARTICLES ══════════════════════════════════════════
-function initStars(){
+function cLB(){document.getElementById('lb').classList.remove('open');document.body.style.overflow='';clearInterval(lbTmr);}
+document.getElementById('lb').addEventListener('click',function(e){if(e.target===this)cLB();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')cLB();});
+// ═══ TOOLTIP ════════════════════════════════════
+const tipEl=document.getElementById('mtip');
+const mtopEl=document.getElementById('mtop');
+function sTip(e,cam){tipEl.innerHTML=`<b style="font-family:Cinzel,serif;color:#daa520;font-size:10.5px">${cam.name}</b><br><span style="color:#c8a060;font-size:9.5px">${rName(cam.reg)}</span>`;tipEl.style.display='block';mTip(e);}
+function mTip(e){const r=mtopEl.getBoundingClientRect();let tx=e.clientX-r.left+10,ty=e.clientY-r.top-9;if(tx+162>r.width)tx=e.clientX-r.left-162;tipEl.style.left=tx+'px';tipEl.style.top=ty+'px';}
+function hTip(){tipEl.style.display='none';}
+// ═══ STARS ══════════════════════════════════════
+function iStars(){
   const c=document.getElementById('stars');
-  function resize(){c.width=window.innerWidth;c.height=window.innerHeight;}
-  resize();window.addEventListener('resize',resize);
+  function sz(){c.width=window.innerWidth;c.height=window.innerHeight;}sz();window.addEventListener('resize',sz);
   const ctx=c.getContext('2d');
-  const stars=Array.from({length:140},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*.9+.15,vx:(Math.random()-.5)*.08,vy:(Math.random()-.5)*.06,a:Math.random()*.45+.08,gold:Math.random()>.65,tw:Math.random()*Math.PI*2,ts:Math.random()*.014+.004}));
-  function draw(){ctx.clearRect(0,0,c.width,c.height);stars.forEach(s=>{s.tw+=s.ts;const a=s.a*(.6+.4*Math.sin(s.tw));ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=s.gold?`rgba(218,165,32,${a})`:`rgba(170,200,255,${a*.7})`;ctx.fill();s.x+=s.vx;s.y+=s.vy;if(s.x<0)s.x=c.width;if(s.x>c.width)s.x=0;if(s.y<0)s.y=c.height;if(s.y>c.height)s.y=0;});requestAnimationFrame(draw);}
-  draw();
+  const st=Array.from({length:130},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*.9+.15,vx:(Math.random()-.5)*.08,vy:(Math.random()-.5)*.06,a:Math.random()*.44+.08,g:Math.random()>.65,tw:Math.random()*Math.PI*2,ts:Math.random()*.013+.004}));
+  function draw(){ctx.clearRect(0,0,c.width,c.height);st.forEach(s=>{s.tw+=s.ts;const a=s.a*(.6+.4*Math.sin(s.tw));ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=s.g?`rgba(218,165,32,${a})`:`rgba(165,195,255,${a*.7})`;ctx.fill();s.x+=s.vx;s.y+=s.vy;if(s.x<0)s.x=c.width;if(s.x>c.width)s.x=0;if(s.y<0)s.y=c.height;if(s.y>c.height)s.y=0;});requestAnimationFrame(draw);}draw();
 }
-
-// ══ AURORA ══════════════════════════════════════════════════
-function initAurora(canvasId,parentId){
-  const c=document.getElementById(canvasId);
-  const par=document.getElementById(parentId);
-  function resize(){c.width=par.clientWidth;c.height=par.clientHeight;}
-  resize();window.addEventListener('resize',resize);
+// ═══ AURORA ═════════════════════════════════════
+function iAurora(cid,pid){
+  const c=document.getElementById(cid);const par=document.getElementById(pid);
+  function sz(){c.width=par.clientWidth;c.height=par.clientHeight;}sz();window.addEventListener('resize',sz);
   const ctx=c.getContext('2d');
   const bands=[{y:.07,a:22,f:.007,s:.34,col:'0,230,100',op:.048},{y:.15,a:15,f:.010,s:.50,col:'0,200,180',op:.038},{y:.04,a:30,f:.006,s:.44,col:'80,150,255',op:.032},{y:.22,a:11,f:.011,s:.28,col:'180,80,255',op:.026}];
   let tt=0;
-  function draw(){
-    const w=c.width,h=c.height;ctx.clearRect(0,0,w,h);
-    bands.forEach(b=>{const by=h*b.y;ctx.beginPath();ctx.moveTo(0,by);for(let x=0;x<=w;x+=3){const y=by+Math.sin(x*b.f+tt*b.s)*b.a+Math.sin(x*b.f*1.8+tt*b.s*1.4)*b.a*.5;ctx.lineTo(x,y);}ctx.lineTo(w,0);ctx.lineTo(0,0);ctx.closePath();const g=ctx.createLinearGradient(0,0,0,by+b.a*2.5);g.addColorStop(0,`rgba(${b.col},${b.op})`);g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.fill();});
-    tt+=.012;requestAnimationFrame(draw);
-  }
-  draw();
+  function draw(){const w=c.width,h=c.height;ctx.clearRect(0,0,w,h);bands.forEach(b=>{const by=h*b.y;ctx.beginPath();ctx.moveTo(0,by);for(let x=0;x<=w;x+=3){const y=by+Math.sin(x*b.f+tt*b.s)*b.a+Math.sin(x*b.f*1.8+tt*b.s*1.4)*b.a*.5;ctx.lineTo(x,y);}ctx.lineTo(w,0);ctx.lineTo(0,0);ctx.closePath();const g=ctx.createLinearGradient(0,0,0,by+b.a*2.5);g.addColorStop(0,`rgba(${b.col},${b.op})`);g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.fill();});tt+=.012;requestAnimationFrame(draw);}draw();
 }
-
-// ══ NAV SCROLL ══════════════════════════════════════════════
-window.addEventListener('scroll',()=>{
-  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>40);
-});
-
-// ══ INTERSECTION OBSERVER ═══════════════════════════════════
-const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.style.opacity='1',e.target.style.transform='translateY(0)';});},{threshold:.1});
-document.querySelectorAll('.sec-hdr,.about-card').forEach(el=>{
-  el.style.opacity='0';el.style.transform='translateY(18px)';el.style.transition='opacity .65s ease, transform .65s ease';
-  io.observe(el);
-});
-
-// ══ INIT ════════════════════════════════════════════════════
-buildLangBtns();
-applyTr();
-buildFilters();
-renderRegions();
-renderList();
-renderGrid();
-initStars();
-initAurora('aurora','hero');
-initAurora('map-aurora','map-top');
-initMap(); // D3 map — fetches real GeoJSON on load
-fetchWx([64.14,-21.90]).then(()=>{
-  const wx=wxCache['64.14,-21.9'];
-  if(wx) applyWx(wx);
-}); // Default Reykjavik weather
-selectCam(CAMS[0]);
+// ═══ INIT ═══════════════════════════════════════
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('sc',window.scrollY>40));
+bLangs();bFilts();rRegs();rList();rGrid();
+iStars();iAurora('aurora','hero');iAurora('map-ac','mtop');
+initMap();
+fWx([64.14,-21.90]);
+sCam(CAMS[0]);
 </script>
 </body>
 </html>
