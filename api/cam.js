@@ -1,43 +1,46 @@
-// Vercel Serverless Function — proxy for Vegagerðin webcam images
-// CommonJS format (no ESM export)
+const ALLOWED = [
+  'artunsbrekka','kringlan','bustadabru','arnarneshaed',
+  'engidalur','leirvogstungumelar','kambar','hellisheidi',
+  'hellisbru','kotstrond'
+];
 
-module.exports = async function handler(req, res) {
-  const cam = req.query.cam;
-  const n   = req.query.n || '1';
-
-  const ALLOWED = [
-    'artunsbrekka','kringlan','bustadabru','arnarneshaed',
-    'engidalur','leirvogstungumelar','kambar','hellisheidi',
-    'hellisbru','kotstrond'
-  ];
+export default async function handler(request) {
+  const url = new URL(request.url);
+  const cam = url.searchParams.get('cam');
+  const n   = url.searchParams.get('n') || '1';
 
   if (!cam || !ALLOWED.includes(cam)) {
-    return res.status(400).send('Invalid camera');
+    return new Response('Invalid camera', { status: 400 });
   }
 
   const imgUrl = `https://www.vegagerdin.is/vgdata/vefmyndavelar/${cam}_${n}.jpg`;
 
   try {
-    const response = await fetch(imgUrl, {
+    const res = await fetch(imgUrl, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120',
         'Referer':    'https://www.vegagerdin.is/',
-        'Accept':     'image/jpeg,image/*,*/*',
+        'Accept':     'image/jpeg,image/*',
       }
     });
 
-    if (!response.ok) {
-      return res.status(response.status).send('Image not available');
+    if (!res.ok) {
+      return new Response('Image unavailable', { status: res.status });
     }
 
-    const buffer = await response.arrayBuffer();
+    const data = await res.arrayBuffer();
 
-    res.setHeader('Content-Type', 'image/jpeg');
-    res.setHeader('Cache-Control', 'public, max-age=25, s-maxage=25');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.status(200).send(Buffer.from(buffer));
-
+    return new Response(data, {
+      status: 200,
+      headers: {
+        'Content-Type':                'image/jpeg',
+        'Cache-Control':               'public, max-age=25, s-maxage=25',
+        'Access-Control-Allow-Origin': '*',
+      }
+    });
   } catch (e) {
-    res.status(502).send('Proxy error: ' + e.message);
+    return new Response('Error: ' + e.message, { status: 502 });
   }
-};
+}
+
+export const config = { runtime: 'edge' };
