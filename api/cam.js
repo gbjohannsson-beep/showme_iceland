@@ -1,14 +1,10 @@
 // Vercel Serverless Function — proxy for Vegagerðin webcam images
-// This bypasses hotlink protection by fetching server-side
+// CommonJS format (no ESM export)
 
-export const config = { runtime: 'edge' };
+module.exports = async function handler(req, res) {
+  const cam = req.query.cam;
+  const n   = req.query.n || '1';
 
-export default async function handler(request) {
-  const url = new URL(request.url);
-  const cam = url.searchParams.get('cam');
-  const n   = url.searchParams.get('n') || '1';
-
-  // Whitelist — only allow Vegagerðin cameras
   const ALLOWED = [
     'artunsbrekka','kringlan','bustadabru','arnarneshaed',
     'engidalur','leirvogstungumelar','kambar','hellisheidi',
@@ -16,38 +12,32 @@ export default async function handler(request) {
   ];
 
   if (!cam || !ALLOWED.includes(cam)) {
-    return new Response('Invalid camera', { status: 400 });
+    return res.status(400).send('Invalid camera');
   }
 
   const imgUrl = `https://www.vegagerdin.is/vgdata/vefmyndavelar/${cam}_${n}.jpg`;
 
   try {
-    const res = await fetch(imgUrl, {
+    const response = await fetch(imgUrl, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; ShowMeIceland/1.0)',
-        'Referer': 'https://www.vegagerdin.is/',
-        'Accept': 'image/jpeg,image/*',
-      },
-      cf: { cacheTtl: 25 } // Cache for 25s (refresh every 30s)
-    });
-
-    if (!res.ok) {
-      return new Response('Image not available', { status: res.status });
-    }
-
-    const img = await res.arrayBuffer();
-
-    return new Response(img, {
-      status: 200,
-      headers: {
-        'Content-Type': 'image/jpeg',
-        'Cache-Control': 'public, max-age=25, s-maxage=25',
-        'Access-Control-Allow-Origin': '*',
-        'X-Proxy': 'showme-iceland',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Referer':    'https://www.vegagerdin.is/',
+        'Accept':     'image/jpeg,image/*,*/*',
       }
     });
-  } catch (e) {
-    return new Response('Fetch failed: ' + e.message, { status: 502 });
-  }
-}
 
+    if (!response.ok) {
+      return res.status(response.status).send('Image not available');
+    }
+
+    const buffer = await response.arrayBuffer();
+
+    res.setHeader('Content-Type', 'image/jpeg');
+    res.setHeader('Cache-Control', 'public, max-age=25, s-maxage=25');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).send(Buffer.from(buffer));
+
+  } catch (e) {
+    res.status(502).send('Proxy error: ' + e.message);
+  }
+};
